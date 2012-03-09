@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Robert's Test - Messages</title>
+</head>
+
+<body>
+
+	<h1>Yay, you got a page back.</h1>
+
+	<div>
+		Messages:
+
+		{% for message in messages %}
+		    <p>Text: {{ message.message_text }}</p>
+		{% endfor %}
+
+	</div>
+
+</body>
+
+</html>
