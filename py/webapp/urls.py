@@ -11,6 +11,7 @@ urlpatterns = patterns('',
 
     # Examples:
     url(r'^$', 'sign_server.views.hello_world'),
+    url(r'^miniBoard/$', 'sign_server.views.mini_board'),
     # url(r'^sign_server/', include('sign_server.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:

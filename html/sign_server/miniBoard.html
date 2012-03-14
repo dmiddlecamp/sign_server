@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>MiniBoard</title>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+
+<style type="text/css">
+table.miniboard
+{
+	border-top: 20px black solid;
+	border-left: 20px black solid;
+	border-right: 20px black solid;
+	padding: 0px;
+	border-collapse: collapse;
+}
+
+table.miniboard td
+{
+	margin: 0px;
+	padding: 0px;
+	border-width: 3px 1px;
+	border-color: black;
+	border-style: solid;
+	background-color: black;
+	color: red;
+	font-family: Monospace; 
+	font-size: 8px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Mini Board</h1>	
+
+<p>
+	This is a test harness.
+</p>
+
+<table class="miniboard">
+
+	{% for rowNum in rows %}
+		<tr style="{% cycle '' '' '' '' '' '' '' '' '' '' '' 'border-bottom: 20px solid black;' %}"  >
+			{% for colNum in cols %}
+				<td id="c_{{ rowNum }}_{{ colNum }}">&nbsp;</td>
+			{% endfor %}
+		</tr>
+	{% endfor %}
+
+</table>
+
+<table>
+	<tr>
+		<td style="width: 50%; vertical-align: top; text-align: center;">
+			<textarea id="bbScriptCode" style="width: 90%; height: 80%; font-family: Monospace;"></textarea>
+			<br>
+			<button onclick="runCode()">Run</button>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<button onclick="clearBoard()">Clear Board</button>
+		</td>
+		<td style="font-family: Monospace; width: 50%; vertical-align: top;">
+			<p>
+				<b>CLEAR BOARD</b>
+				<br>
+				Clears off all the values on the board. Does not affect the
+				color or cursor position.
+			</p>
+			<p>
+				<b>FILL BOARD [character]</b>
+				<br>
+				Fills the board with the <i>character</i>, or 'X' if omitted
+				using the current color.
+			</p>
+			<p>
+				<b>MOVE POS [row [,col]]</b>
+				<br>
+				Moves the current cursor position by <i>row</i> and <i>col</i>.
+			</p>
+			<p>
+				<b>PRINT [your text]</b>
+				<br>
+				Prints out <i>your text</i> with the current color at the
+				current cursor position. The cursor is always left at the next
+				position after it's done printing.
+			</p>
+			<p>
+				<b>SET COLOR [color]</b>
+				<br />
+				Set the current color to <i>color</i>.
+			</p>
+			<p>
+				<b>SET POS [row [,col]]</b>
+				<br>
+				Sets the current cursor position to <i>row</i> and <i>col</i>.
+			</p>
+		</td>
+	</tr>
+</table>
+
+<script>
+$(document).ready(function() {
+	var row = 0;
+	var col = 0;
+
+	while (col < 192)
+	{
+		$('#c_' + row++ + '_' + col++).css('color', 'green').html('A');
+
+		if (row == 24) { row = 0; }
+	}
+});
+
+function clearBoard()
+{
+	$('td[id^="c_"]').html('&nbsp;');
+}
+
+function runCode()
+{
+	var bbScript = $('#bbScriptCode').val().split('\n');
+	var color = 'red';
+	var curRow = 0;
+	var curCol = 0;
+
+	for (var i in bbScript)
+	{
+		var thisLine = bbScript[i];
+
+		if (thisLine == '')
+		{
+			
+		}
+		else if (thisLine == 'CLEAR BOARD')
+		{
+			clearBoard();
+		}
+		else if (thisLine.indexOf('FILL BOARD') == 0)
+		{
+			var character = '';
+
+			if (thisLine.length > 10)
+			{
+				character = thisLine.substring(11, 12).replace(/^\s+|\s+$/g, "");
+			}
+
+			if (character == '')
+			{
+				character = 'X';
+			}
+
+			$('td[id^="c_"]').css('color', color).html(character);
+		}
+		else if (thisLine.indexOf('SET COLOR ') == 0)
+		{
+			color = thisLine.substring(10, thisLine.length);
+		}
+		else if (thisLine.indexOf('PRINT ') == 0)
+		{
+			var thisString = thisLine.substring(6, thisLine.length).split('');
+
+			for (var j in thisString)
+			{
+				$('#c_' + curRow + '_' + (curCol++)).html(thisString[j]).css('color', color);
+			}
+		}
+		else if (thisLine.indexOf('SET POS ') == 0)
+		{
+			if (thisLine.indexOf(',', 8) > -1)
+			{
+				var newPos = thisLine.substring(8, thisLine.length).split(',');
+
+				if (newPos.length >= 0)
+				{
+					curRow = newPos[0];
+
+					if (newPos.length > 0)
+					{
+						curCol = newPos[1];
+					}
+				}
+			}
+			else
+			{
+				curRow = thisLine.substring(8, thisLine.length);
+			}
+		}
+		else if (thisLine.indexOf('MOVE POS ') == 0)
+		{
+			if (thisLine.indexOf(',', 9) > -1)
+			{
+				var newPos = thisLine.substring(9, thisLine.length).split(',');
+
+				if (newPos.length >= 0)
+				{
+					curRow = curRow + parseInt(newPos[0]);
+
+					if (newPos.length > 0)
+					{
+						curCol = curCol + parseInt(newPos[1]);
+					}
+				}
+			}
+			else
+			{
+				curRow = curRow + parseInt(thisLine.substring(9, thisLine.length));
+			}
+		}
+		else
+		{
+			alert("Unknown command: " + thisLine);
+		}
+	}
+}
+
+</script>
+
+</body>
+
+</html>
