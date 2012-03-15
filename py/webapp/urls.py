@@ -12,6 +12,13 @@ urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'sign_server.views.hello_world'),
     url(r'^miniBoard/$', 'sign_server.views.mini_board'),
+
+
+    #debug
+    url(r'^board_test/$', 'sign_server.views.board_test'),
+    url(r'^calibrate_displays/$', 'sign_server.views.calibrate_displays'),
+
+
     # url(r'^sign_server/', include('sign_server.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
