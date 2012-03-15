@@ -49,3 +49,8 @@ def calibrate_displays(request):
 
     return HttpResponse(content="Calibrated")
 
+def file_test(request):
+    board.write_file('/projects/sign_server/hello_board.txt')
+
+    return HttpResponse(content="Displayed Test")
+
