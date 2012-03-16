@@ -34,23 +34,40 @@ def board_test(request):
     return HttpResponse(content="Okay")
 
 def calibrate_displays(request):
-    sock = board.get_connection()
+    try:
+        sock = board.get_connection()
 
-    board.calibrate(sock, 0)
-    board.calibrate(sock, 1)
-    board.calibrate(sock, 2)
-    board.calibrate(sock, 3)
-    board.calibrate(sock, 4)
-    board.calibrate(sock, 5)
-    board.calibrate(sock, 6)
+        board.calibrate(sock, 0)
+        board.calibrate(sock, 1)
+        board.calibrate(sock, 2)
+        board.calibrate(sock, 3)
+        board.calibrate(sock, 4)
+        board.calibrate(sock, 5)
+        #board.calibrate(sock, 6)
 
+        board.close_connection(sock)
 
-    board.close_connection(sock)
+    except:
+        board.close_connection(sock)
 
     return HttpResponse(content="Calibrated")
 
+def clear_board(request):
+    try:
+        sock = board.get_connection()
+
+        board.clear_board(sock)
+
+        board.close_connection(sock)
+
+    except:
+        board.close_connection(sock)
+
+    return HttpResponse(content="Cleared")
+
+
 def file_test(request):
-    board.write_file('/projects/sign_server/hello_board.txt')
+    board.write_file('/projects/sign_server/happy_friday.txt')
 
     return HttpResponse(content="Displayed Test")
 
