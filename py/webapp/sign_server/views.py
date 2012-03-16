@@ -1,4 +1,5 @@
 # Create your views here.
+from time import time, localtime, strftime
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from sign_server import board
@@ -71,3 +72,23 @@ def file_test(request):
 
     return HttpResponse(content="Displayed Test")
 
+
+def time_stamp(request):
+
+    secs = time()
+    lastTime = strftime("%a, %d %b %Y %H:%M:%S", localtime(secs) )
+    timeLen = len('Thu, 28 Jun 2001 14:17:15')
+
+    try:
+        sock = board.get_connection()
+
+        #TODO: calculate when clearing is necessary (e.g. when formatted string length changes from prev)
+        #board.write_to_board(sock, 4, 0, 0, "                                ")
+        board.write_to_board(sock, 4, 0, 0, lastTime)
+
+        board.close_connection(sock)
+
+    except:
+        board.close_connection(sock)
+
+    return HttpResponse(content="Written")
