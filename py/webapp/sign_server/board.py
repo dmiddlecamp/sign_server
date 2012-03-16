@@ -117,7 +117,7 @@ def write_split(sock, display, row, col, lines):
 
         if row >= maxRows:
             display = display_widths[str(display)]['below']
-            row = 0
+            row = row - maxRows
 
         write_line_split(sock, display, row, col, line)
         row = row + 1
