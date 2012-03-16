@@ -21,6 +21,8 @@ urlpatterns = patterns('',
     url(r'^clear_board/$', 'sign_server.views.clear_board'),
     url(r'^time_stamp/$', 'sign_server.views.time_stamp'),
 
+    url(r'^raw/(?P<row>.*)/(?P<col>.*)/(?P<msg>.*)', 'sign_server.views.rawInterface'),
+
 
 
     # url(r'^sign_server/', include('sign_server.foo.urls')),

@@ -1,4 +1,5 @@
 # Create your views here.
+import sys
 from time import time, localtime, strftime
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
@@ -86,9 +87,35 @@ def time_stamp(request):
         #board.write_to_board(sock, 4, 0, 0, "                                ")
         board.write_to_board(sock, 4, 0, 0, lastTime)
 
+        msg = "Hi Teke"
+        board.write_to_board(sock, 5, 11, 32 - len(msg), msg)
+
+        msg = "Hi ROBERT!"
+        board.write_to_board(sock, 5, 9, 32 - len(msg), msg)
+
         board.close_connection(sock)
 
     except:
         board.close_connection(sock)
 
     return HttpResponse(content="Written")
+
+
+
+def rawInterface(request, row, col, msg):
+
+    row = int(row)
+    col = int(col)
+
+    try:
+        sock = board.get_connection()
+
+        board.write_split(sock, 0, row, col, [ msg ])
+        #board.write_to_board(sock, 0, row, col, msg)
+
+        board.close_connection(sock)
+
+    except:
+        board.close_connection(sock)
+
+    return HttpResponse(content="Wrote " + msg)
