@@ -34,14 +34,16 @@ def close_connection(sock):
     sock.close()
 
 def clear_board(sock):
-    calibrate(sock, 0, True)
-    calibrate(sock, 1, True)
-    calibrate(sock, 4, True)
+    clear_panel(sock, 0)
+    clear_panel(sock, 1)
+    clear_panel(sock, 4)
 
-    calibrate(sock, 2, True)
-    calibrate(sock, 3, True)
-    calibrate(sock, 5, True)
+    clear_panel(sock, 2)
+    clear_panel(sock, 3)
+    clear_panel(sock, 5)
 
+def clear_panel(sock, panelNumber):
+    calibrate(sock, panelNumber, True)
 
 def calibrate(sock, display, clear=False):
     maxrows = 12
@@ -81,9 +83,7 @@ display_widths = {
 
     '2': { 'cols': 80, 'rows': 12, 'right': 3, 'below': -1 },
     '3': { 'cols': 80, 'rows': 12, 'right': 5, 'below': -1 },
-    '5': { 'cols': 32, 'rows': 12, 'right': -1, 'below': -1 },
-
-
+    '5': { 'cols': 32, 'rows': 12, 'right': -1, 'below': -1 }
 }
 
 

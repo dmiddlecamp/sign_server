@@ -20,6 +20,11 @@ urlpatterns = patterns('',
     url(r'^file_test/$', 'sign_server.views.file_test'),
     url(r'^clear_board/$', 'sign_server.views.clear_board'),
     url(r'^time_stamp/$', 'sign_server.views.time_stamp'),
+    url(r'^twitter_board/$', 'sign_server.views.twitter_panel'),
+    url(r'^info_board/$', 'sign_server.views.info_panel'),
+
+    url(r'^view_announcements/$', 'sign_server.views.view_announcements'),
+    url(r'^update_announcements/$', 'sign_server.views.update_announcements'),
 
     url(r'^raw/(?P<row>.*)/(?P<col>.*)/(?P<msg>.*)', 'sign_server.views.rawInterface'),
 

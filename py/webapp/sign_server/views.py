@@ -1,9 +1,12 @@
 # Create your views here.
-import sys
-from time import time, localtime, strftime
-from django.http import HttpResponse
+from dircache import annotate
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
-from sign_server import board
+from sign_server import board, twitter, weather, announcements
+from sign_server.announcements import UpdateAnnouncementsForm
+from sign_server.models import Announcement
+from time import time, localtime, strftime
+import sys
 
 
 def hello_world(request):
@@ -119,3 +122,59 @@ def rawInterface(request, row, col, msg):
         board.close_connection(sock)
 
     return HttpResponse(content="Wrote " + msg)
+
+def twitter_panel(request):
+    try:
+        sock = board.get_connection()
+#        tb = twitter_board.TwitterBoard()
+        board.clear_panel(sock, 2)
+        board.write_to_board(sock, 2, 0, 0, "*************** Tweets ********************************************************")
+        curRowNum = 1
+        for row in twitter.Twitter().getNewTweets(11, 79):
+            board.write_to_board(sock, 2, curRowNum, 0, str(row + ' '))
+            curRowNum += 1
+    except:
+        print "Unexpected error:", sys.exc_info()[0]
+    finally:
+        board.close_connection(sock)
+
+    return HttpResponse(content="Twitter Board Updated")
+
+
+def info_panel(request):
+    try:
+        sock = board.get_connection()
+#        tb = twitter_board.TwitterBoard()
+        board.clear_panel(sock, 4)
+        board.write_to_board(sock, 4, 0, 1, strftime("%a, %d %B %I:%M%p", localtime(time())))
+        curRowNum = 1
+
+        for row in weather.Weather().getCurrentWeather():
+            print row
+            board.write_to_board(sock, 4, curRowNum, 3, str(row))
+            curRowNum += 1
+    except:
+        print "Unexpected error:", sys.exc_info()[0]
+    finally:
+        board.close_connection(sock)
+
+    return HttpResponse(content="Info Board Updated")
+
+
+def view_announcements(request):
+    announcements = Announcement.objects.all()
+    render_to_response('robertsTest/messages.html', {'announcements': announcements})
+
+
+def update_announcements(request):
+    if request.method == 'POST': # If the form has been submitted...
+        form = UpdateAnnouncementsForm(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+            announcement = Announcement()
+            announcement.announcement_text = form.cleaned_data['text']
+            announcement.created_date = time()
+            announcement.save()
+            return HttpResponse(content="Thank you")
+        else:
+            return HttpResponse(content="This did not work at all!")
+        
