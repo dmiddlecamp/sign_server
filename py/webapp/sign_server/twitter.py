@@ -44,7 +44,7 @@ class Twitter(object):
             #colorStr = "{#" + str(random.randint(0, 2)) + "}"
 
             #colorStr = "{#" + str(curColor % 3) + "}"  #markup
-            colorStr = chr( 30 + (curColor%3))  #just write the colors in order
+            colorStr = chr( 29 + (curColor%3))  #just write the colors in order
             curColor = (curColor + 1)
 
             thisTweet = colorStr + '@' + tweet['from_user'] + ': ' + re.sub(' http://[a-zA-Z0-9\./\=\-_?]*', '', tweet['text']) + '  '
