@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from sign_server import board, twitter, weather, announcements
 from sign_server.announcements import UpdateAnnouncementsForm
+from sign_server.board_updater import updateTwitterBoard
 from sign_server.models import Announcement
 from time import time, localtime, strftime
 import sys
@@ -31,10 +32,12 @@ def mini_board(request):
 
 
 def board_test(request):
-    msg = "Hello World"
-    sock = board.get_connection()
-    board.write_to_board(sock, 0, 0, 0, msg)
-    board.close_connection(sock)
+#    msg = "Hello World"
+#    sock = board.get_connection()
+#    board.write_to_board(sock, 0, 0, 0, msg)
+#    board.close_connection(sock)
+
+    updateTwitterBoard(1, 2)
 
     return HttpResponse(content="Okay")
 

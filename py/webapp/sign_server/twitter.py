@@ -4,6 +4,7 @@ Created on Mar 7, 2012
 @author: robert
 '''
 import json
+import random
 import re
 import urllib
 
@@ -33,9 +34,20 @@ class Twitter(object):
         thisRow = ''
         rows = []
 
+        curColor = 0
+
+
         for tweet in jsonResponse['results'].__iter__():
             # Build the printable tweet text
-            thisTweet = '@' + tweet['from_user'] + ': ' + re.sub(' http://[a-zA-Z0-9\./\=\-_?]*', '', tweet['text']) + '     '
+
+            #random colors
+            #colorStr = "{#" + str(random.randint(0, 2)) + "}"
+
+            #colorStr = "{#" + str(curColor % 3) + "}"  #markup
+            colorStr = chr( 30 + (curColor%3))  #just write the colors in order
+            curColor = (curColor + 1)
+
+            thisTweet = colorStr + '@' + tweet['from_user'] + ': ' + re.sub(' http://[a-zA-Z0-9\./\=\-_?]*', '', tweet['text']) + '  '
 
             while curRowNum < maxRows:
                 # Append as much as we can to this row
@@ -52,7 +64,7 @@ class Twitter(object):
                         break
                     else:
                         # Add what we can to this row
-                        thisRow = thisTweet[charsLeft:maxCharsPerRow]
+                        thisRow = colorStr + thisTweet[charsLeft:maxCharsPerRow]
                         thisTweet = thisTweet[maxCharsPerRow:]
                         charsLeft = maxCharsPerRow - len(thisRow)
                 else:

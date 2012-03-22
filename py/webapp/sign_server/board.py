@@ -140,6 +140,11 @@ def write_file(filename):
 
 
 
+def replace_colors(msg):
+    msg = msg.replace("{#0}", chr(30))
+    msg = msg.replace("{#1}", chr(31))
+    msg = msg.replace("{#2}", chr(32))
+    return msg
 
 
 
@@ -158,6 +163,8 @@ def write_to_board(sock, display, row, col, msg):
 
 
     #str = 'a' + char(31) + str
+
+    msg = replace_colors(msg)
 
     buffer = array.array('B', str(0) * (5+len(msg)))
     pack_into('BBBB'+ str(len(msg)) + 'sB', buffer, 0,
