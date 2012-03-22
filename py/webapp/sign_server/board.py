@@ -121,22 +121,35 @@ def write_split(sock, display, row, col, lines):
 
         write_line_split(sock, display, row, col, line)
         row = row + 1
-
-
-
         pass
-
-
-
-
     pass
-
 
 def write_file(filename):
     f = open(filename, 'r')
     sock = get_connection()
     write_split(sock, 0, 0, 0, f.readlines())
     close_connection(sock)
+
+    #TODO: write inside a bounding box, wrapping rows as we go
+    #try to detect and preserve colors
+    # i.e. a color (29,30,31) should not count against available chars
+    # i.e. a color should be detected and wrapped to the start of the next row
+
+#def write_region(sock, display, row, col, msg, maxRow, maxCol):
+#    maxRows = display_widths[str(display)]['rows']
+#
+#    for line in lines:
+#        if display < 0:
+#            break
+#
+#        if row >= maxRows:
+#            display = display_widths[str(display)]['below']
+#            row = row - maxRows
+#
+#        write_line_split(sock, display, row, col, line)
+#        row = row + 1
+#        pass
+#    pass
 
 
 

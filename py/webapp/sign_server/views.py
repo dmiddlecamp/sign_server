@@ -32,12 +32,50 @@ def mini_board(request):
 
 
 def board_test(request):
-#    msg = "Hello World"
-#    sock = board.get_connection()
-#    board.write_to_board(sock, 0, 0, 0, msg)
-#    board.close_connection(sock)
 
-    updateTwitterBoard(1, 2)
+    sock = board.get_connection()
+    #board.write_to_board(sock, 0, 5, 15, "You have no chance to survive")
+    #board.write_to_board(sock, 0, 6, 20, "Make your time")
+
+#    board.write_to_board(sock, 0, 7, 20, "Boom zig")
+#    board.write_to_board(sock, 0, 8, 30, "Boom zig")
+#    board.write_to_board(sock, 0, 9, 40, "Boom zig")
+#    board.write_to_board(sock, 0, 10, 50, "Boom zig")
+
+    #board.write_split(sock, 0, 2, 30, [ "That's gotta be rough", ])
+    #board.write_split(sock, 0, 3, 40, [ chr(30) + "Sorry, technical difficulties", ])
+
+    #board.write_split(sock, 1, 0, 10, chr(30) + "Vertical Text!")
+
+    #chr(30) +
+    board.write_split(sock, 1, 0, 0, [ "Demerit Board:                                         ", ])
+
+    demerits = [
+        ("@DonohuePatrickE", 6,),
+        ("@IdeaFood", 1,),
+        ("@donmball", 0,),
+        ("       ", ' ',),
+    ]
+    rowIdx = 1
+    for d in demerits:
+        board.write_split(sock, 1, rowIdx, 0, [  "                                       ", ])
+        board.write_split(sock, 1, rowIdx, 2, [  chr(31) + d[0], ])
+
+#        colorStr = ''
+#        if d[1] > 1:
+#            colorStr = chr(31)
+#        if d[1] >= 3:
+#            colorStr = chr(30)
+
+        board.write_split(sock, 1, rowIdx, 25, [  chr(30) + str(d[1]) + "             ", ])
+        rowIdx += 1
+
+
+
+
+    board.close_connection(sock)
+
+    #updateTwitterBoard(1, 2)
 
     return HttpResponse(content="Okay")
 
