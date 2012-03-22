@@ -1,4 +1,6 @@
 # Django settings for sign_server project.
+from datetime import timedelta
+import djcelery
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -122,6 +124,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'djcelery',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -146,3 +149,31 @@ LOGGING = {
         },
     }
 }
+
+
+# Celery Settings
+
+BROKER_HOST = "myhost.local"
+BROKER_PORT = 5672
+BROKER_VHOST = "/"
+BROKER_USER = "guest"
+BROKER_PASSWORD = "guest"
+CELERY_RESULT_BACKEND = "amqp"
+CELERY_IMPORTS = ("sign_server.board_updater", )
+
+CELERYBEAT_SCHEDULE = {
+    "info_board_updater": {
+        "task": "sign_server.board_updater.updateInfoBoard",
+        "schedule": timedelta(seconds=60),
+        "args": (1, 2)
+    },
+    "twitter_board_updater": {
+        "task": "sign_server.board_updater.updateTwitterBoard",
+        "schedule": timedelta(minutes=5),
+        "args": (1, 2)
+    },
+}
+
+
+
+djcelery.setup_loader()
