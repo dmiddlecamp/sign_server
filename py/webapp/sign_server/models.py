@@ -1,7 +1,13 @@
 from django.db import models
 
-# Create your models here.
 class Announcement(models.Model):
-    announcement_text = models.CharField(max_length=78)
+    PRIOIRTY_CHOICES = (
+        ('L', 'Low'),
+        ('M', 'Medium'),
+        ('H', 'High'),
+    )
+    announcement_id = models.AutoField(primary_key=True)
+    announcement_text = models.CharField(max_length=64)
+    priority = models.CharField(max_length=1, choices=PRIOIRTY_CHOICES)
     is_active = models.BooleanField()
-    created_date = models.DateTimeField()
+    creation_date = models.DateTimeField()

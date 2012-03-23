@@ -87,9 +87,6 @@ display_widths = {
 }
 
 
-
-
-
 def write_line_split(sock, display, row, col, line):
     if display < 0:
         return
@@ -123,6 +120,9 @@ def write_split(sock, display, row, col, lines):
         row = row + 1
         pass
     pass
+
+#def write_to_board(sock, display, beginRow, beginCol, endRow, endCol, payload):
+    
 
 def write_file(filename):
     f = open(filename, 'r')

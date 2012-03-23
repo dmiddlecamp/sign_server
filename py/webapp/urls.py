@@ -22,6 +22,7 @@ urlpatterns = patterns('',
     url(r'^time_stamp/$', 'sign_server.views.time_stamp'),
     url(r'^twitter_board/$', 'sign_server.views.twitter_panel'),
     url(r'^info_board/$', 'sign_server.views.info_panel'),
+    url(r'^announcements_panel/$', 'sign_server.views.announcements_panel'), 
 
     url(r'^view_announcements/$', 'sign_server.views.view_announcements'),
     url(r'^update_announcements/$', 'sign_server.views.update_announcements'),
