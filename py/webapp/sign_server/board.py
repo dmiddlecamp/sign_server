@@ -89,23 +89,136 @@ display_widths = {
 
 
 
+def write_line_split(sock, display, row, col, line, maxCol=-1):
+    """
+    A non-recursive line writer that spans panels
+    """
 
-def write_line_split(sock, display, row, col, line):
     if display < 0:
         return
 
-    displayWidth = display_widths[str(display)]['cols']
+    charsToWrite = len(line)
 
-    displayEnd = col + len(line)
-    delta = displayEnd - displayWidth
-    drawto = min(displayWidth, len(line))
+    #check to see if we have more than we can write
+    leftoversStr = ''
+    if maxCol > 0 and (charsToWrite + col) > maxCol:
+        longestWriteAllowed = (maxCol-col)
+        leftoversStr = line[longestWriteAllowed:]
+        line = line[0:longestWriteAllowed]
+        charsToWrite = len(line)
 
-    write_to_board(sock, display, row, col, line[0: drawto] )
+    lastColor = -1
 
-    if delta >= 0:
-        nextdisplay = display_widths[str(display)]['right']
-        if nextdisplay >= 0:
-            write_line_split(sock, nextdisplay, row, 0, line[drawto:])
+    while charsToWrite > 0:
+        displayWidth = display_widths[str(display)]['cols']
+
+        if col > displayWidth:
+            #move to the next board
+            col -= displayWidth
+            nextdisplay = display_widths[str(display)]['right']
+            if nextdisplay < 0:
+                return line + leftoversStr     #we don't have anywhere to go, bail
+
+            display = nextdisplay
+
+        lastCharToDisplay = min(displayWidth - col, len(line))
+        write_to_board(sock, display, row, col, line[0: lastCharToDisplay] )
+
+        lastColor = findLastColor(line[0: lastCharToDisplay])
+
+        line = line[lastCharToDisplay:]
+
+        #something like this, where what we write doesn't have to perfectly line up, or something...
+        #if lastColor > 0:
+        #    line = chr(lastColor) + line
+
+        charsToWrite = len(line) - countControlCodes(line)
+
+
+
+    return leftoversStr
+
+
+def findLastColor(msg):
+    colors = [ 29, 30, 31 ]
+    lastIdx = -1
+    lastColor = -1
+    for c in colors:
+        colorChar = chr(c)
+        idx = str(msg).rfind(colorChar)
+        if idx > lastIdx:
+            lastColor = colorChar
+
+    return lastColor
+
+def countControlCodes(msg):
+    controlCodes = [ 29, 30, 31 ]
+
+    #please to be making efficient
+    count = 0
+    for c in controlCodes:
+        c = chr(c)
+        count += msg.count(c)
+
+    return count
+
+
+#
+#
+#
+#
+#
+#
+#    #how wide is this particular display? (relative length, 0-80, 0-32)
+#
+#
+#    #how many columns does our message cover?
+#    messageEnd = col + len(line)
+#
+#    #don't let our message pass our imaginary boundary
+#    wrappedStr = ''
+#    if maxCol > 0 and messageEnd > maxCol:
+#        longestWriteAllowed = (maxCol-col)
+#        wrappedStr = line[longestWriteAllowed:]
+#        line = line[0:longestWriteAllowed]
+#        #messageEnd = max(maxCol, messageEnd)
+#
+#    #do we need more than one write operation?
+#    delta = messageEnd - displayWidth
+#
+#
+#
+#
+#    #how many characters of this message, can we show on this display?
+#    # e.g. if we start writing at column 5, and there are 80 columns, then we can write 75 chars, or len(line), whichever comes first
+#    lastCharToDisplay = min(displayWidth - col, len(line))
+#
+#    while lastCharToDisplay < 0:
+#        #scroll right until we can write
+#        display = display_widths[str(display)]['right']
+#        if nextdisplay >= 0:
+#            displayWidth = display_widths[display]['cols']
+#            lastCharToDisplay = min(displayWidth - col, len(line))
+#
+#
+#    #write what we can to this display
+#    write_to_board(sock, display, row, col, line[0: lastCharToDisplay] )
+#
+#
+#    if delta >= 0:
+#        #keep writing the rest of this message at the start of the next board to the right
+#        nextdisplay = display_widths[str(display)]['right']
+#        if nextdisplay >= 0:
+#            return write_line_split(sock,
+#
+#                nextdisplay, row, 0,
+#                line[lastCharToDisplay:], maxCol=maxCol)
+#        else:
+#            #we're probably line / word wrapping, so return our leftovers
+#            return line[lastCharToDisplay:] + wrappedStr
+#    else:
+#        #we're done
+#        return wrappedStr
 
 
 def write_split(sock, display, row, col, lines):
@@ -135,10 +248,35 @@ def write_file(filename):
     # i.e. a color (29,30,31) should not count against available chars
     # i.e. a color should be detected and wrapped to the start of the next row
 
-#def write_region(sock, display, row, col, msg, maxRow, maxCol):
-#    maxRows = display_widths[str(display)]['rows']
-#
-#    for line in lines:
+
+def write_region_wrap(sock, display, row, col, msg, maxRow, maxCol):
+    """
+    Takes a very long 'msg' and wraps it in the provided bounds
+    """
+
+    if row < 0:
+        row = 0
+    if col < 0:
+        col = 0
+    if maxRow < 0 or maxRow > 24:
+        maxRow = 24
+    if maxCol < 0 or maxCol > 192:
+        maxCol = 192
+
+    remainingMsg = write_line_split(sock, display, row, col, msg, maxCol=maxCol)
+    while len(remainingMsg) > 0 and row < maxRow:
+        row += 1
+        remainingMsg = write_line_split(sock, display, row, col, remainingMsg, maxCol=maxCol)
+
+    pass
+
+
+
+
+
+    #maxRows = display_widths[str(display)]['rows']
+
+#    #for line in lines:
 #        if display < 0:
 #            break
 #
@@ -149,7 +287,7 @@ def write_file(filename):
 #        write_line_split(sock, display, row, col, line)
 #        row = row + 1
 #        pass
-#    pass
+#    #pass
 
 
 

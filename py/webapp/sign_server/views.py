@@ -147,10 +147,8 @@ def time_stamp(request):
 
 
 def rawInterface(request, row, col, msg):
-
     row = int(row)
     col = int(col)
-
     try:
         sock = board.get_connection()
 
@@ -163,6 +161,37 @@ def rawInterface(request, row, col, msg):
         board.close_connection(sock)
 
     return HttpResponse(content="Wrote " + msg)
+
+
+def rawRegionInterface(request, row, rowlimit, col, collimit, msg):
+
+    row = int(row)
+    rowlimit = int(rowlimit)
+    col = int(col)
+    collimit = int(collimit)
+
+    responseMsg = "Running..."
+
+    try:
+        sock = board.get_connection()
+
+
+        board.clear_panel(sock, 1)
+
+        board.write_region_wrap(sock, 0, row, col, msg, rowlimit, collimit)
+        responseMsg = "Wrote " + msg
+
+        board.close_connection(sock)
+
+
+    except:
+        responseMsg = "Err"
+    finally:
+        board.close_connection(sock)
+
+    return HttpResponse(content=responseMsg)
+
+
 
 def twitter_panel(request):
     try:

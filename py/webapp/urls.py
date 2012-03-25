@@ -27,6 +27,8 @@ urlpatterns = patterns('',
     url(r'^update_announcements/$', 'sign_server.views.update_announcements'),
 
     url(r'^raw/(?P<row>.*)/(?P<col>.*)/(?P<msg>.*)', 'sign_server.views.rawInterface'),
+    url(r'^rawBox/(?P<row>.*)-(?P<rowlimit>.*)/(?P<col>.*)-(?P<collimit>.*)/(?P<msg>.*)', 'sign_server.views.rawRegionInterface'),
+
 
 
 
