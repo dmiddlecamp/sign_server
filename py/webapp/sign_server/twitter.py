@@ -13,7 +13,7 @@ class Twitter(object):
     classdocs
     '''
 
-    twitterBaseUrl = "http://search.twitter.com/search.json?q=%40CoCoMSP&rpp=10&result_type=mixed"
+    twitterBaseUrl = "http://search.twitter.com/search.json?q=%40CoCoMSP&rpp=10&result_type=recent"
     lastTweetId = 176856173172097026;
 #    maxCharsPerRow = 80
 #    maxRows = 6
@@ -34,8 +34,7 @@ class Twitter(object):
         thisRow = ''
         rows = []
 
-        curColor = 0
-
+        curColor = 2
 
         for tweet in jsonResponse['results'].__iter__():
             # Build the printable tweet text
