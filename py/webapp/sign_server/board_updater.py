@@ -15,13 +15,14 @@ logger = logging.getLogger(__name__)
 @task()
 def updateInfoBoard(foo, bar):
     logger.warn("updateInfoBoard called");
+    weatherRows = weather.Weather().getCurrentWeather()
     try:
         sock = board.get_connection()
         board.clear_panel(sock, 4)
         board.write_to_board(sock, 4, 0, 1, strftime("%a, %d %B %I:%M%p", localtime(time())))
         curRowNum = 1
 
-        for row in weather.Weather().getCurrentWeather():
+        for row in weatherRows:
             print row
             board.write_to_board(sock, 4, curRowNum, 3, str(row))
             curRowNum += 1
@@ -35,12 +36,13 @@ def updateInfoBoard(foo, bar):
 @task()
 def updateTwitterBoard(foo, bar):
     logger.warn("updateTwitterBoard called");
+    twitterRows = twitter.Twitter().getNewTweets(11, 79)
     try:
         sock = board.get_connection()
         board.clear_panel(sock, 2)
         board.write_to_board(sock, 2, 0, 0, "*************** Tweets ********************************************************")
         curRowNum = 1
-        for row in twitter.Twitter().getNewTweets(11, 79):
+        for row in twitterRows:
             board.write_to_board(sock, 2, curRowNum, 0, str(row + ' '))
             curRowNum += 1
     except:

@@ -1,10 +1,8 @@
+from struct import *
+from time import sleep
+import array
 import socket
 import sys
-from struct import *
-import array
-from time import sleep
-from django.http import HttpResponse
-from numpy.oldnumeric.alter_code1 import char
 
 __author__ = 'middleca'
 
