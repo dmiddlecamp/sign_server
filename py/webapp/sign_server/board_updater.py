@@ -115,6 +115,9 @@ def updateNetworkStatus(foo=0, bar=0):
                 p.wait()
                 line = p.stdout.read()
                 match = re.search('(\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+) ms', line)
+                if match is None:
+                    return -1
+
                 return match.group(1)
 
             except Exception, e:
@@ -140,6 +143,8 @@ def updateNetworkStatus(foo=0, bar=0):
                 colorStr = red
             elif delayNum > 125:
                 colorStr = amber
+            elif delayNum < 0:
+                colorStr = red
 
             delayStr = colorStr + str(s['delay']) + "                      "
             board.write_line_split(sock, 0, curRowNum, 20, delayStr )
