@@ -103,7 +103,7 @@ def updateNetworkStatus(foo=0, bar=0):
             dict(name= 'github.com' ),
             dict(name= 'reddit.com' ),
             dict(name= 'facebook.com' ),
-            #dict(name= 'expertocrede.com' ),
+            dict(name= 'expertocrede.com' ),
         ]
 
         import subprocess
@@ -111,7 +111,7 @@ def updateNetworkStatus(foo=0, bar=0):
 
         def do_ping(addr):
             try:
-                cmdStr = "/bin/ping -c 1 %s " % addr
+                cmdStr = "/bin/ping -c 1 -w 1 %s " % addr
                 p = subprocess.Popen(cmdStr, shell=True, stdout=subprocess.PIPE)
                 p.wait()
                 line = p.stdout.read()
@@ -146,6 +146,7 @@ def updateNetworkStatus(foo=0, bar=0):
                 colorStr = amber
             elif delayNum < 0:
                 colorStr = red
+                s['delay'] = "DOWN"
 
             delayStr = colorStr + str(s['delay']) + "      "
             board.write_line_split(sock, 0, curRowNum, 20, delayStr )
