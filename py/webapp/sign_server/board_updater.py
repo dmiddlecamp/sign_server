@@ -100,6 +100,7 @@ def updateNetworkStatus(foo=0, bar=0):
             dict(name= 'twitter.com' ),
             dict(name= 'google.com' ),
             dict(name= 'cocomsp.com' ),
+            dict(name= 'github.com' ),
             dict(name= 'reddit.com' ),
             dict(name= 'facebook.com' ),
             #dict(name= 'expertocrede.com' ),
@@ -134,7 +135,7 @@ def updateNetworkStatus(foo=0, bar=0):
         sock = board.get_connection()
         curRowNum = 0
         for s in servers:
-            msg = s['name'] + ":                             "
+            msg = s['name'] + ":   "
             board.write_line_split(sock, 0, curRowNum, 0, msg )
 
             delayNum = float(s['delay'])
@@ -146,13 +147,18 @@ def updateNetworkStatus(foo=0, bar=0):
             elif delayNum < 0:
                 colorStr = red
 
-            delayStr = colorStr + str(s['delay']) + "                      "
+            delayStr = colorStr + str(s['delay']) + "      "
             board.write_line_split(sock, 0, curRowNum, 20, delayStr )
 
             curRowNum += 1
 
+        board.write_line_split(sock, 0, curRowNum, 0, "                                    " )
+
+
     except Exception, e:
         print "Unexpected error:", sys.exc_info()[0]
+        board.write_line_split(sock, 0, curRowNum, 0, "--errors, could not finish" )
+
     finally:
         if sock is not None:
             board.close_connection(sock)
