@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from sign_server import board, twitter, weather, announcements
 from sign_server.announcements import UpdateAnnouncementsForm
-from sign_server.board_updater import updateTwitterBoard
+from sign_server.board_updater import updateTwitterBoard, updateNetworkStatus
 from sign_server.models import Announcement
 from time import time, localtime, strftime
 import sys
@@ -229,6 +229,11 @@ def info_panel(request):
         board.close_connection(sock)
 
     return HttpResponse(content="Info Board Updated")
+
+def network_status(request):
+    updateNetworkStatus()
+
+    return HttpResponse(content="Network Status Updated")
 
 
 def view_announcements(request):
