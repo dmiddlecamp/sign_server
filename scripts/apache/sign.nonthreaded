@@ -1,0 +1,6 @@
+WSGIScriptAlias /litebrite /projects/sign_server/py/webapp/apache/django.wsgi
+
+WSGIDaemonProcess litebrite processes=1 threads=5
+WSGIProcessGroup litebrite
+
+

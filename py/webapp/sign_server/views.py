@@ -2,7 +2,7 @@
 from dircache import annotate
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
-from sign_server import board, twitter, weather, announcements
+from sign_server import board, twitter, weather, announcements, board_updater
 from sign_server.announcements import UpdateAnnouncementsForm
 from sign_server.board_updater import updateTwitterBoard, updateNetworkStatus
 from sign_server.models import Announcement
@@ -252,4 +252,7 @@ def update_announcements(request):
             return HttpResponse(content="Thank you")
         else:
             return HttpResponse(content="This did not work at all!")
-        
+
+def announcements_panel(request):
+    board_updater.updateAnnouncementBoard(1, 2)
+    return HttpResponse(content="Announcement Board Updated")

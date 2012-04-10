@@ -1,10 +1,8 @@
+from struct import *
+from time import sleep
+import array
 import socket
 import sys
-from struct import *
-import array
-from time import sleep
-from django.http import HttpResponse
-from numpy.oldnumeric.alter_code1 import char
 
 __author__ = 'middleca'
 
@@ -85,7 +83,6 @@ display_widths = {
     '3': { 'cols': 80, 'rows': 12, 'right': 5, 'below': -1 },
     '5': { 'cols': 32, 'rows': 12, 'right': -1, 'below': -1 }
 }
-
 
 
 
@@ -236,6 +233,9 @@ def write_split(sock, display, row, col, lines):
         row = row + 1
         pass
     pass
+
+#def write_to_board(sock, display, beginRow, beginCol, endRow, endCol, payload):
+    
 
 def write_file(filename):
     f = open(filename, 'r')
