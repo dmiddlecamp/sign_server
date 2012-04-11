@@ -76,7 +76,7 @@ STATICFILES_DIRS = (
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
 # Examples: "http://foo.com/static/admin/", "/static/admin/".
-ADMIN_MEDIA_PREFIX = '/static/admin/'
+ADMIN_MEDIA_PREFIX = '/litebrite/static/admin/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
