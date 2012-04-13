@@ -15,7 +15,7 @@ class Twitter(object):
 
     twitterBaseUrl = "http://search.twitter.com/search.json?q=%40CoCoMSP&rpp=10&result_type=recent"
 #    twitterBaseUrl = "http://api.twitter.com/1/lists/statuses.json?slug=coco-members&owner_screen_name=CoCoMSP&page=1&per_page=10"
-    lastTweetId = 176856173172097026;
+    lastTweetId = -1;
 #    maxCharsPerRow = 80
 #    maxRows = 6
 
@@ -28,6 +28,10 @@ class Twitter(object):
 
     def getNewTweets(self, maxRows, maxCharsPerRow):
         jsonResponse = json.loads(urllib.urlopen(self.twitterBaseUrl).read())
+
+        if (self.lastTweetId == jsonResponse['max_id_str']):
+            return []
+
         self.lastTweetId = jsonResponse['max_id_str']
 
         curRowNum = 0
@@ -41,19 +45,17 @@ class Twitter(object):
             # Build the printable tweet text
 
             #random colors
-            #colorStr = "{#" + str(random.randint(0, 2)) + "}"
-
-            #colorStr = "{#" + str(curColor % 3) + "}"  #markup
-            colorStr = chr( 29 + (curColor%3))  #just write the colors in order
+            colorStr = chr(29 + (curColor % 3))  #just write the colors in order
             curColor = (curColor + 1)
 
-            thisTweet = colorStr + '@' + tweet['from_user'] + ': ' + re.sub(' http://[a-zA-Z0-9\./\=\-_?]*', '', tweet['text']) + '  '
+            thisTweet = colorStr + '@' + tweet['from_user'] + ': ' + re.sub(' http://[a-zA-Z0-9\./\=\-_?]*', '', tweet['text']) + ' '
+            charsLeft = charsLeft + 1
 
             while curRowNum < maxRows:
                 # Append as much as we can to this row
                 thisRow += thisTweet[0: charsLeft]
 
-                if charsLeft <= len(thisTweet):
+                if charsLeft <= (self.colorlessLen(thisTweet)):
                     # This tweet was longer than the row allows, so we'll move
                     # on to the next row, if we can...
                     rows.append(thisRow)
@@ -66,7 +68,7 @@ class Twitter(object):
                         # Add what we can to this row
                         thisRow = colorStr + thisTweet[charsLeft:maxCharsPerRow]
                         thisTweet = thisTweet[maxCharsPerRow:]
-                        charsLeft = maxCharsPerRow - len(thisRow)
+                        charsLeft = maxCharsPerRow - self.colorlessLen(thisRow)
                 else:
                     # This was a short tweet, let's just record it and move on
                     # to the next row
@@ -74,3 +76,6 @@ class Twitter(object):
                     break
 
         return rows
+
+    def colorlessLen(self, string):
+        return len(string) - string.count(chr(29)) - string.count(chr(30)) - string.count(chr(31))

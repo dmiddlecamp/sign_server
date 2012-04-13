@@ -163,7 +163,6 @@ LOGGING = {
 
 
 # Celery Settings
-
 BROKER_HOST = "portland"
 BROKER_PORT = 5672
 BROKER_VHOST = "sign_server"
@@ -171,6 +170,7 @@ BROKER_USER = "sign_server"
 BROKER_PASSWORD = "kor3ik7ug3cix6op"
 CELERY_RESULT_BACKEND = "amqp"
 CELERY_IMPORTS = ("sign_server.board_updater", )
+CELERYD_CONCURRENCY = 1
 
 CELERYBEAT_SCHEDULE = {
     "info_board_updater": {
@@ -180,11 +180,9 @@ CELERYBEAT_SCHEDULE = {
     },
     "twitter_board_updater": {
         "task": "sign_server.board_updater.updateTwitterBoard",
-        "schedule": timedelta(seconds=270),
+        "schedule": timedelta(seconds=60),
         "args": (1, 2)
     },
 }
-
-
 
 djcelery.setup_loader()

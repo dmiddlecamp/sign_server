@@ -37,18 +37,20 @@ def updateInfoBoard(foo, bar):
 def updateTwitterBoard(foo, bar):
     logger.warn("updateTwitterBoard called");
     twitterRows = twitter.Twitter().getNewTweets(11, 79)
-    try:
-        sock = board.get_connection()
-        board.clear_panel(sock, 2)
-        board.write_to_board(sock, 2, 0, 0, "*************** Tweets ********************************************************")
-        curRowNum = 1
-        for row in twitterRows:
-            board.write_to_board(sock, 2, curRowNum, 0, str(row + ' '))
-            curRowNum += 1
-    except:
-        print "Unexpected error:", sys.exc_info()[0]
-    finally:
-        board.close_connection(sock)
+
+    if len(twitterRows) > 0:
+        try:
+            sock = board.get_connection()
+            board.clear_panel(sock, 2)
+            board.write_to_board(sock, 2, 0, 0, "*************** Tweets ********************************************************")
+            curRowNum = 1
+            for row in twitterRows:
+                board.write_to_board(sock, 2, curRowNum, 0, str(row + ' '))
+                curRowNum += 1
+        except:
+            print "Unexpected error:", sys.exc_info()[0]
+        finally:
+            board.close_connection(sock)
 
     return 0
 
