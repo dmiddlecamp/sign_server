@@ -2,6 +2,7 @@
 from celery.schedules import crontab
 from datetime import timedelta
 import djcelery
+import os
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -40,7 +41,7 @@ SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
-USE_I18N = True
+USE_I18N = False
 
 # If you set this to False, Django will not format dates, numbers and
 # calendars according to the current locale
@@ -65,10 +66,17 @@ STATIC_ROOT = ''
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
 
+# RDN 2012-04-11 ## Added to fix issues with the admin static files not showing
+# in prod
+SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+STATICFILES_DIRS = (
+  os.path.join(SITE_ROOT, 'static/'),
+)
+
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
 # Examples: "http://foo.com/static/admin/", "/static/admin/".
-ADMIN_MEDIA_PREFIX = '/static/admin/'
+ADMIN_MEDIA_PREFIX = '/litebrite/static/admin/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -109,7 +117,8 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    "/Users/robert/git/sign_server/html"
+    "/Users/robert/git/sign_server/html",
+    "/projects/sign_server/html"
     # >>> David, you'll need to put your full path in here.
 )
 
@@ -154,7 +163,6 @@ LOGGING = {
 
 
 # Celery Settings
-
 BROKER_HOST = "portland"
 BROKER_PORT = 5672
 BROKER_VHOST = "sign_server"
@@ -162,6 +170,8 @@ BROKER_USER = "sign_server"
 BROKER_PASSWORD = "kor3ik7ug3cix6op"
 CELERY_RESULT_BACKEND = "amqp"
 CELERY_IMPORTS = ("sign_server.board_updater", )
+CELERYD_CONCURRENCY = 1
+CELERYD_PREFETCH_MULTIPLIER = 1
 
 CELERYBEAT_SCHEDULE = {
     "info_board_updater": {
@@ -171,11 +181,9 @@ CELERYBEAT_SCHEDULE = {
     },
     "twitter_board_updater": {
         "task": "sign_server.board_updater.updateTwitterBoard",
-        "schedule": timedelta(seconds=270),
+        "schedule": timedelta(seconds=60),
         "args": (1, 2)
     },
 }
-
-
 
 djcelery.setup_loader()
