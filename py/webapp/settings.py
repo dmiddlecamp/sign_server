@@ -171,6 +171,7 @@ BROKER_PASSWORD = "kor3ik7ug3cix6op"
 CELERY_RESULT_BACKEND = "amqp"
 CELERY_IMPORTS = ("sign_server.board_updater", )
 CELERYD_CONCURRENCY = 1
+CELERYD_PREFETCH_MULTIPLIER = 1
 
 CELERYBEAT_SCHEDULE = {
     "info_board_updater": {
