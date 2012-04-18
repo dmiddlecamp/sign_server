@@ -44,6 +44,8 @@ class Twitter(object):
         for tweet in jsonResponse['results'].__iter__():
             # Build the printable tweet text
 
+            tweet = str(tweet)
+
             #random colors
             colorStr = chr(29 + (curColor % 3))  #just write the colors in order
             curColor = (curColor + 1)
