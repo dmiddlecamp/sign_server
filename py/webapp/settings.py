@@ -180,7 +180,7 @@ CELERYBEAT_SCHEDULE = {
     },
     "twitter_board_updater": {
         "task": "sign_server.board_updater.updateTwitterBoard",
-        "schedule": timedelta(seconds=180),
+        "schedule": timedelta(seconds=60),
         "args": (1, 2)
     },
 }

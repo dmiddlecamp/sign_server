@@ -197,7 +197,7 @@ def twitter_panel(request):
     try:
         sock = board.get_connection()
 #        tb = twitter_board.TwitterBoard()
-        board.clear_panel(sock, 2)
+#        board.clear_panel(sock, 2)
         board.write_to_board(sock, 2, 0, 0, "*************** Tweets ********************************************************")
         curRowNum = 1
         for row in twitter.Twitter().getNewTweets(11, 79):
@@ -215,7 +215,7 @@ def info_panel(request):
     try:
         sock = board.get_connection()
 #        tb = twitter_board.TwitterBoard()
-#        board.clear_panel(sock, 4)
+        board.clear_panel(sock, 4)
         board.write_to_board(sock, 4, 0, 1, strftime("%a, %d %B %I:%M%p", localtime(time())))
         curRowNum = 1
 
