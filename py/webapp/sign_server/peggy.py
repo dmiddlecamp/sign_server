@@ -38,7 +38,7 @@ def get_lease(request, term):
         new_lease = BoardLease(board_lease_code=lease_code, is_active=True, start_date=datetime.now(), end_date=lease_expiry, creation_date=datetime.now())
         new_lease.save()
 
-        response_data['result'] = 'failure'
+        response_data['result'] = 'success'
         response_data['lease_code'] = lease_code
         response_data['lease_expiry'] = str(lease_expiry)
 
