@@ -4,7 +4,7 @@ from datetime import timedelta
 import djcelery
 import os
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (

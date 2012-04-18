@@ -32,6 +32,9 @@ urlpatterns = patterns('',
     url(r'^rawBox/(?P<row>.*)-(?P<rowlimit>.*)/(?P<col>.*)-(?P<collimit>.*)/(?P<msg>.*)', 'sign_server.views.rawRegionInterface'),
 
 
+    url(r'^peggy/get_lease/(?P<term>.*)', 'sign_server.peggy.get_lease'),
+    url(r'^peggy/clear/(?P<lease_code>.*)/(?P<row>.*)', 'sign_server.peggy.clear_board'),
+    url(r'^peggy/write/(?P<lease_code>.*)/(?P<row>.*)/(?P<col>.*)/(?P<msg>.*)', 'sign_server.peggy.write_to_board'),
 
 
     # url(r'^sign_server/', include('sign_server.foo.urls')),

@@ -1,6 +1,7 @@
 import os
 import sys
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+os.environ["CELERY_LOADER"] = "django"
 
 path = '/projects/sign_server/py'
 if path not in sys.path:

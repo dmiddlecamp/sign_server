@@ -11,3 +11,11 @@ class Announcement(models.Model):
     priority = models.CharField(max_length=1, choices=PRIOIRTY_CHOICES)
     is_active = models.BooleanField()
     creation_date = models.DateTimeField()
+
+class BoardLease(models.Model):
+    board_lease_id = models.AutoField(primary_key=True)
+    board_lease_code = models.CharField(max_length=32)
+    is_active = models.BooleanField()
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    creation_date = models.DateTimeField()
