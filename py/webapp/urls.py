@@ -1,6 +1,5 @@
 from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
-import robertsTest
 
 # Uncomment the next two lines to enable the admin:
 admin.autodiscover()

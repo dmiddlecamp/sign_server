@@ -1,5 +1,4 @@
 # Django settings for sign_server project.
-from celery.schedules import crontab
 from datetime import timedelta
 import djcelery
 import os
@@ -181,7 +180,7 @@ CELERYBEAT_SCHEDULE = {
     },
     "twitter_board_updater": {
         "task": "sign_server.board_updater.updateTwitterBoard",
-        "schedule": timedelta(seconds=60),
+        "schedule": timedelta(seconds=180),
         "args": (1, 2)
     },
 }
