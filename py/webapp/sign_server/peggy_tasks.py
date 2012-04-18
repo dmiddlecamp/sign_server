@@ -4,7 +4,6 @@ Created on Apr 18, 2012
 @author: robert
 '''
 from sign_server import board
-import sys
 
 def clear_board(row, **kwargs):
     try:
@@ -23,8 +22,7 @@ def write_to_board(row, col, msg, **kwargs):
         board.write_split(sock, 0, row, col, [ msg ])
         board.close_connection(sock)
     except:
-        print "Unexpected error:", sys.exc_info()[0]
-        return False
-    finally:
         board.close_connection(sock)
+#        print "Unexpected error:", sys.exc_info()[0]
+        return False
     return True
