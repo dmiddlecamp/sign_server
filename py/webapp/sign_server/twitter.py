@@ -44,13 +44,11 @@ class Twitter(object):
         for tweet in jsonResponse['results'].__iter__():
             # Build the printable tweet text
 
-            tweet = str(tweet)
-
             #random colors
             colorStr = chr(29 + (curColor % 3))  #just write the colors in order
             curColor = (curColor + 1)
 
-            thisTweet = colorStr + '@' + tweet['from_user'] + ': ' + re.sub(' http://[a-zA-Z0-9\./\=\-_?]*', '', tweet['text']) + ' '
+            thisTweet = colorStr + '@' + tweet['from_user'] + ': ' + re.sub(' http://[a-zA-Z0-9\./\=\-_?]*', '', str(tweet['text'])) + ' '
             charsLeft = charsLeft + 1
 
             while curRowNum < maxRows:
