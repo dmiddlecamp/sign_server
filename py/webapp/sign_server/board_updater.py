@@ -42,7 +42,7 @@ def updateTwitterBoard(foo, bar):
     if len(twitterRows) > 0:
         try:
             sock = board.get_connection()
-            board.clear_panel(sock, 2)
+#            board.clear_panel(sock, 2)
             board.write_to_board(sock, 2, 0, 0, "*************** Tweets ********************************************************")
             curRowNum = 1
             for row in twitterRows:
