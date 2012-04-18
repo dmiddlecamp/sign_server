@@ -48,7 +48,7 @@ class Twitter(object):
             colorStr = chr(29 + (curColor % 3))  #just write the colors in order
             curColor = (curColor + 1)
 
-            thisTweet = colorStr + '@' + tweet['from_user'] + ': ' + re.sub(' http://[a-zA-Z0-9\./\=\-_?]*', '', str(tweet['text'])) + ' '
+            thisTweet = str(colorStr + '@' + tweet['from_user'] + ': ' + re.sub(' http://[a-zA-Z0-9\./\=\-_?]*', '', str(tweet['text'])) + ' ')
             charsLeft = charsLeft + 1
 
             while curRowNum < maxRows:
