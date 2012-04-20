@@ -29,6 +29,7 @@ def get_lease(request, term):
 
     if search.count() > 0:
         response_data['result'] = 'failure'
+        response_data['reason_code'] = 'in_use'
     else:
         m = md5.new()
         m.update(unicode(datetime.now().microsecond.__str__))
@@ -49,6 +50,7 @@ def clear_board(request, lease_code, row):
     response_data = dict()
     if has_current_lease(lease_code) == False:
         response_data['result'] = "failure"
+        response_data['reason_code'] = "bad_lease_code"
     else:
         peggy_tasks.clear_board(row)
         response_data['result'] = "success"
@@ -60,6 +62,7 @@ def write_to_board(request, lease_code, row, col, msg):
     response_data = dict()
     if has_current_lease(lease_code) == False:
         response_data['result'] = "failure"
+        response_data['reason_code'] = "bad_lease_code"
     else:
         peggy_tasks.write_to_board(int(row), int(col), msg)
         response_data['result'] = "success"
