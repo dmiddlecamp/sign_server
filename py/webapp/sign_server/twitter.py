@@ -25,12 +25,15 @@ class Twitter(object):
         Constructor
         '''
 
+    def resetLastTweet(self):
+        self.lastTweetId = -1
 
     def getNewTweets(self, maxRows, maxCharsPerRow):
-        jsonResponse = json.loads(urllib.urlopen(self.twitterBaseUrl).read())
+	self.rawResponse = urllib.urlopen(self.twitterBaseUrl).read()
+        jsonResponse = json.loads(self.rawResponse)
 
         if (self.lastTweetId == jsonResponse['max_id_str']):
-            return []
+            return [ ]
 
         self.lastTweetId = jsonResponse['max_id_str']
 
@@ -47,8 +50,9 @@ class Twitter(object):
             #random colors
             colorStr = chr(29 + (curColor % 3))  #just write the colors in order
             curColor = (curColor + 1)
+            tweetBody = tweet['text'].encode('ascii', 'ignore')
 
-            thisTweet = str(colorStr + '@' + tweet['from_user'] + ': ' + re.sub(' http://[a-zA-Z0-9\./\=\-_?]*', '', str(tweet['text'])) + ' ')
+            thisTweet = str(colorStr + '@' + tweet['from_user'] + ': ' + re.sub(' http://[a-zA-Z0-9\./\=\-_?]*', '', tweetBody ) + ' ')
             charsLeft = charsLeft + 1
 
             while curRowNum < maxRows:
