@@ -14,14 +14,16 @@ def hello_world(request):
     return HttpResponse("Hello World")
 
 def mini_board(request):
-    maxCols = 192
+#    maxCols = 192
+    maxCols = 96
     curCol = 0
     cols = []
     while curCol < maxCols:
         cols.append(curCol)
         curCol += 1
 
-    maxRows = 24
+#    maxRows = 24
+    maxRows = 12
     curRow = 0
     rows = []
     while curRow < maxRows:

@@ -27,7 +27,7 @@ table.miniboard td
 	background-color: black;
 	color: red;
 	font-family: Monospace; 
-	font-size: 8px;
+	font-size: 12px;
 }
 
 </style>
@@ -59,9 +59,11 @@ table.miniboard td
 		<td style="width: 50%; vertical-align: top; text-align: center;">
 			<textarea id="bbScriptCode" style="width: 90%; height: 60%; font-family: Monospace;"></textarea>
 			<br>
-			<button onclick="runCode()">Run</button>
+			<button onclick="runCode(false)">Run</button>
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<button onclick="clearBoard()">Clear Board</button>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<button onclick="runCode(true)">Run on LiteBrite</button>
 		</td>
 		<td style="font-family: Monospace; width: 50%; vertical-align: top;">
 			<p>
@@ -112,7 +114,16 @@ table.miniboard td
 	</tr>
 </table>
 
-<script>
+<script type="text/javascript">
+
+var peggyUrl = "http://localhost:8000/peggy";
+var runOnLiteBrite = false;
+var leaseCode;
+var color = 'red';
+var curRow = 0;
+var curCol = 0;
+
+
 $(document).ready(function() {
 	var row = 0;
 	var col = 0;
@@ -125,18 +136,57 @@ $(document).ready(function() {
 	}
 });
 
-function clearBoard()
+
+function getLeaseCode()
 {
-	$('td[id^="c_"]').html('&nbsp;');
+	$.ajax({
+		url: peggyUrl + "/get_lease/1",
+		success: function(response) {
+			if (response.result == 'failure') {
+				alert("We could not get a lease. Please try again later.");
+				return false;
+			}
+
+			leaseCode = response.lease_code;
+			alert("We got a lease code:" + leaseCode);
+			return true;
+		},
+		dataType: "json",
+		async: false
+	});
 }
 
-var color = 'red';
-var curRow = 0;
-var curCol = 0;
 
-function runCode()
+function clearBoard()
 {
-	reset();
+	if (runOnLiteBrite)
+	{
+		$.ajax({
+			url: peggyUrl + "/clear" + leaseCode,
+			success: function(response) {
+				if (response.result == 'failure') {
+					alert("We could not clear the board.");
+					return;
+				}
+			},
+		  dataType: "json",
+		  async: false});
+	}
+	else
+	{
+		$('td[id^="c_"]').html('&nbsp;');
+	}
+}
+
+
+function runCode(sendToBoard)
+{
+	reset(sendToBoard);
+
+	if (runOnLiteBrite && !getLeaseCode())
+	{
+		return;
+	}
 
 	var bbScript = $('#bbScriptCode').val().split('\n');
 
@@ -146,6 +196,8 @@ function runCode()
 
 function execCommand(bbScript, runIndex, returnToIndex, runCount, timeout)
 {
+	alert("runOnLiteBrite=" + runOnLiteBrite + "; leaseCode=" + leaseCode +"; color=" + color + "; curRow=" + curRow + "; curCol=" + curCol);
+
 	timeout = 0;
 
 	if (runIndex >= bbScript.length)
@@ -186,7 +238,7 @@ function execCommand(bbScript, runIndex, returnToIndex, runCount, timeout)
 		}
 		else if (thisLine == 'RESET')
 		{
-			reset();
+			reset(runOnLiteBrite);
 		}
 		else if (thisLine.indexOf('FILL BOARD') == 0)
 		{
@@ -202,7 +254,14 @@ function execCommand(bbScript, runIndex, returnToIndex, runCount, timeout)
 				character = 'X';
 			}
 
-			$('td[id^="c_"]').css('color', color).html(character);
+			if (runOnLiteBrite)
+			{
+				
+			}
+			else
+			{
+				$('td[id^="c_"]').css('color', color).html(character);
+			}
 		}
 		else if (thisLine.indexOf('SET COLOR ') == 0)
 		{
@@ -210,11 +269,18 @@ function execCommand(bbScript, runIndex, returnToIndex, runCount, timeout)
 		}
 		else if (thisLine.indexOf('PRINT ') == 0)
 		{
-			var thisString = thisLine.substring(6, thisLine.length).split('');
-
-			for (var j in thisString)
+			if (runOnLiteBrite)
 			{
-				$('#c_' + curRow + '_' + (curCol++)).html(thisString[j]).css('color', color);
+				
+			}
+			else
+			{
+				var thisString = thisLine.substring(6, thisLine.length).split('');
+
+				for (var j in thisString)
+				{
+					$('#c_' + curRow + '_' + (curCol++)).html(thisString[j]).css('color', color);
+				}
 			}
 		}
 		else if (thisLine.indexOf('SET POS ') == 0)
@@ -279,10 +345,11 @@ function execCommand(bbScript, runIndex, returnToIndex, runCount, timeout)
 	return 0;
 }
 
-function reset()
+
+function reset(sendToBoard)
 {
-	clearBoard();
-	color = 'red';
+	runOnLiteBrite = sendToBoard;
+	color = 'green';
 	curRow = 0;
 	curCol = 0;
 }
