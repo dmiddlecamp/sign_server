@@ -16,6 +16,7 @@ class BoardLease(models.Model):
     board_lease_id = models.AutoField(primary_key=True)
     board_lease_code = models.CharField(max_length=32)
     is_active = models.BooleanField()
+    current_color = models.TextField(max_length=1, default=chr(29))
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     creation_date = models.DateTimeField()

@@ -12,10 +12,13 @@ import json
 import md5
 
 
-def has_current_lease(lease_code):
+def get_current_lease(lease_code):
     search = BoardLease.objects.filter(end_date__gte=safe_datetime.now())
     search.filter(board_lease_code=lease_code)
-    return search.count() > 0
+    try:
+        return search.get()
+    except BoardLease.DoesNotExist:
+        return None
 
 
 def get_lease(request, term):
@@ -48,7 +51,7 @@ def get_lease(request, term):
 
 def clear_board(request, lease_code, row):
     response_data = dict()
-    if has_current_lease(lease_code) == False:
+    if get_current_lease(lease_code) == None:
         response_data['result'] = "failure"
         response_data['reason_code'] = "bad_lease_code"
     else:
@@ -60,12 +63,37 @@ def clear_board(request, lease_code, row):
 
 def write_to_board(request, lease_code, row, col, msg):
     response_data = dict()
-    if has_current_lease(lease_code) == False:
+    board_lease = get_current_lease(lease_code)
+    if board_lease == None:
         response_data['result'] = "failure"
         response_data['reason_code'] = "bad_lease_code"
     else:
-        peggy_tasks.write_to_board(int(row), int(col), msg)
+        peggy_tasks.write_to_board(int(row), int(col), board_lease.current_color + msg)
         response_data['result'] = "success"
 
     return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
+def set_color(request, lease_code, color):
+    response_data = dict()
+    board_lease = get_current_lease(lease_code)
+    if board_lease == None:
+        response_data['result'] = "failure"
+        response_data['reason_code'] = "bad_lease_code"
+    else:
+        new_color = None
+        if color == 'green':
+            new_color = chr(29)
+        elif color == 'red':
+            new_color = chr(30)
+        elif color == 'orange':
+            new_color = chr(31)
+        else:
+            response_data['result'] = "failure"
+            response_data['reason_code'] = "unknown_color"
+
+        if new_color != None:
+            board_lease.current_color = new_color
+            response_data['result'] = "success"
+            board_lease.save()
+
+    return HttpResponse(json.dumps(response_data), mimetype="application/json")

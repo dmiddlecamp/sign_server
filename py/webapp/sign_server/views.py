@@ -9,6 +9,8 @@ from sign_server.models import Announcement
 from time import time, localtime, strftime
 import sys
 
+def home(request):
+    return render_to_response('sign_server/home.html')
 
 def hello_world(request):
     return HttpResponse("Hello World")
