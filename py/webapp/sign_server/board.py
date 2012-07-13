@@ -1,6 +1,7 @@
 from struct import *
 from time import sleep
 import array
+import re
 import socket
 import sys
 
@@ -297,8 +298,18 @@ def replace_colors(msg):
     msg = msg.replace("{#2}", chr(32))
     return msg
 
-
-
+def remap_chars(msg):
+    msg = re.sub('\[', '\(', msg)
+    msg = re.sub('\\\\', '\/', msg)
+    msg = re.sub('\]', '\)', msg)
+    msg = re.sub('\^', '-', msg)
+    msg = re.sub('_', '-', msg)
+    msg = re.sub('`', '\'', msg)
+    msg = re.sub('{', '\(', msg)
+    msg = re.sub('\|', '1', msg)
+    msg = re.sub('}', '\)', msg)
+    msg = re.sub('~', '-', msg)
+    return msg
 
 
 def write_to_board(sock, display, row, col, msg):
@@ -316,6 +327,7 @@ def write_to_board(sock, display, row, col, msg):
     #str = 'a' + char(31) + str
 
     msg = replace_colors(msg)
+    msg = remap_chars(msg)
 
     buffer = array.array('B', str(0) * (5+len(msg)))
     pack_into('BBBB'+ str(len(msg)) + 'sB', buffer, 0,

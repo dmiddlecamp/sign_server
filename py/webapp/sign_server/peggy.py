@@ -6,6 +6,8 @@ Created on Apr 17, 2012
 from datetime import datetime, timedelta
 from django.http import HttpResponse
 from django.utils.datetime_safe import datetime as safe_datetime
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 from sign_server import peggy_tasks
 from sign_server.models import BoardLease
 import json
@@ -21,7 +23,7 @@ def get_current_lease(lease_code):
         return None
 
 
-def get_lease(request, term):
+def get_lease(request, term=1):
     response_data = dict()
 
     term = int(term)
@@ -49,7 +51,7 @@ def get_lease(request, term):
     return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 
-def clear_board(request, lease_code, row):
+def clear_board(request, lease_code, row=None):
     response_data = dict()
     if get_current_lease(lease_code) == None:
         response_data['result'] = "failure"
@@ -61,7 +63,14 @@ def clear_board(request, lease_code, row):
     return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 
-def write_to_board(request, lease_code, row, col, msg):
+@require_http_methods(["GET", "POST"])
+@csrf_exempt
+def write_to_board(request, lease_code=1, row=0, col=0, msg=''):
+    if request.method == 'POST':
+        lease_code = request.POST['lease_code']
+        row = request.POST['row']
+        col = request.POST['col']
+        msg = request.POST['msg']
     response_data = dict()
     board_lease = get_current_lease(lease_code)
     if board_lease == None:
@@ -73,7 +82,7 @@ def write_to_board(request, lease_code, row, col, msg):
 
     return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
-def set_color(request, lease_code, color):
+def set_color(request, lease_code=1, color='green'):
     response_data = dict()
     board_lease = get_current_lease(lease_code)
     if board_lease == None:

@@ -29,7 +29,7 @@ class Twitter(object):
         self.lastTweetId = -1
 
     def getNewTweets(self, maxRows, maxCharsPerRow):
-	self.rawResponse = urllib.urlopen(self.twitterBaseUrl).read()
+        self.rawResponse = urllib.urlopen(self.twitterBaseUrl).read()
         jsonResponse = json.loads(self.rawResponse)
 
         if (self.lastTweetId == jsonResponse['max_id_str']):

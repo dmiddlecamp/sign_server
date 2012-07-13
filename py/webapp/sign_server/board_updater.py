@@ -3,12 +3,12 @@ Created on Mar 21, 2012
 
 @author: robert
 '''
-import socket
 from celery.task import task
 from sign_server import board, weather, twitter, announcements
 from sign_server.models import Announcement
 from time import time, localtime, strftime
 import logging
+import socket
 import sys
 
 logger = logging.getLogger(__name__)

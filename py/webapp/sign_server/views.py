@@ -260,3 +260,45 @@ def update_announcements(request):
 def announcements_panel(request):
     board_updater.updateAnnouncementBoard(1, 2)
     return HttpResponse(content="Announcement Board Updated")
+
+def char_test(request):
+    try:
+        sock = board.get_connection()
+        board.clear_panel(sock, 0)
+        i = 0
+        while i < 128:
+            row = i / 12
+            col = (i % 40) + 3
+            board.write_to_board(sock, 0, row, col, str(chr(i)))
+            i += 1
+    except:
+        print "Unexpected error:", sys.exc_info()[0]
+    finally:
+        board.close_connection(sock)
+
+    return HttpResponse(content="Info Board Updated")
+
+
+def test_chars(request):
+    try:
+        sock = board.get_connection()
+        board.clear_panel(sock, 0)
+
+        curRow = 0
+        curCol = 0
+
+        for i in range(152):
+            thisStr = str(i) + ": " + str(chr(i)) + " "
+
+            board.write_to_board(sock, 0, curRow, curCol, thisStr)
+            curRow = curRow + 1
+
+            if curRow == 12:
+                curRow = 0
+                curCol = curCol + 7
+    except:
+        return HttpResponse(content="Unexpected error: " + str(sys.exc_info()[0]))
+    finally:
+        board.close_connection(sock)
+
+    return HttpResponse(content="Test Chars Completed")
