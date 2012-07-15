@@ -15,10 +15,11 @@ logger = logging.getLogger(__name__)
 
 @task()
 def updateInfoBoard(foo, bar):
-    logger.warn("updateInfoBoard called");
+    logger.warn("updateInfoBoard called")
     weatherRows = weather.Weather().getCurrentWeather()
+    sock = None
     try:
-        sock = board.get_connection()
+        #sock = board.get_connection()
         board.clear_panel(sock, 4)
         board.write_to_board(sock, 4, 0, 1, strftime("%a, %d %B %I:%M%p", localtime(time())))
         curRowNum = 1
@@ -39,10 +40,11 @@ def updateTwitterBoard(foo, bar):
     logger.warning("updateTwitterBoard called")
     twitterRows = twitter.Twitter().getNewTweets(11, 79)
 
+    sock = None
     if len(twitterRows) > 0:
         try:
-            sock = board.get_connection()
-#            board.clear_panel(sock, 2)
+            #sock = board.get_connection()
+            #board.clear_panel(sock, 2)
             board.write_to_board(sock, 2, 0, 0, "*************** Tweets ********************************************************")
             curRowNum = 1
             for row in twitterRows:
@@ -59,7 +61,7 @@ def updateTwitterBoard(foo, bar):
 def updateAnnouncementBoard(foo, bar):
     logger.warn("updateAnnouncementBoard called")
     try:
-        sock = board.get_connection()
+#        sock = board.get_connection()
         board.clear_panel(sock, 3)
         board.write_to_board(sock, 3, 0, 0, " - - - - - - - - - - - - - - - - Announcements - - - - - - - - - - - - - - - -  ")
         curRowNum = 1
@@ -133,7 +135,7 @@ def updateNetworkStatus(foo=0, bar=0):
         green = chr(29)
         amber = chr(31)
 
-        sock = board.get_connection()
+#        sock = board.get_connection()
         curRowNum = 0
         for s in servers:
             msg = s['name'] + ":   "

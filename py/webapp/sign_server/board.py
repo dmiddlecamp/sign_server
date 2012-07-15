@@ -10,8 +10,25 @@ __author__ = 'middleca'
 BOARD_IP = '10.1.3.250'
 BOARD_PORT = 25
 
-maxContinuousWriteChars = 4 * (192)
+BOARD_PORT_BOTTOM = 25
+BOARD_PORT_TOP = 26
+
+maxContinuousWriteChars = 4 * 192
 _currentWriteCounter = 0
+
+display_sockets = {
+    'Empty': None
+}
+
+display_widths = {
+    '0': { 'cols': 80, 'rows': 12, 'right': 1, 'below': 2, 'port': BOARD_PORT_TOP },
+    '1': { 'cols': 80, 'rows': 12, 'right': 4, 'below': 3, 'port': BOARD_PORT_TOP },
+    '4': { 'cols': 32, 'rows': 12, 'right': -1, 'below': 5, 'port': BOARD_PORT_TOP },
+
+    '2': { 'cols': 80, 'rows': 12, 'right': 3, 'below': -1, 'port': BOARD_PORT_BOTTOM },
+    '3': { 'cols': 80, 'rows': 12, 'right': 5, 'below': -1, 'port': BOARD_PORT_BOTTOM },
+    '5': { 'cols': 32, 'rows': 12, 'right': -1, 'below': -1, 'port': BOARD_PORT_BOTTOM }
+}
 
 
 def get_connection():
@@ -29,8 +46,63 @@ def get_connection():
 
     return sock
 
+def get_connection_port(port):
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    except socket.error, msg:
+        sys.stderr.write("[ERROR] %s\n" % msg[1])
+        sys.exit(1)
+
+    try:
+        sock.connect((BOARD_IP, port))
+    except socket.error, msg:
+        sys.stderr.write("[ERROR] %s\n" % msg[1])
+        sys.exit(2)
+
+    return sock
+
+
 def close_connection(sock):
-    sock.close()
+    global display_sockets
+
+    if sock is not None:
+        sock.close()
+    else:
+        #for now, lets just close everything
+        for key in display_sockets.keys():
+            if display_sockets[key] is not None:
+                display_sockets[key].close()
+
+        display_sockets = { 'Empty': None }
+
+
+    pass
+
+
+
+def get_connection_split(display, row, col):
+    '''
+    This function should grab or create a cached socket, not sure when to close it!
+    '''
+    port = None
+    global display_sockets
+    global display_widths
+
+    if display is not None:
+        port = display_widths[str(display)]['port']
+
+    if port is None:
+        #TODO: figure out where we are... but I think we shouldn't get here.
+        pass
+
+    key = str(port)
+
+    if display_sockets.has_key(key) is False:
+        display_sockets[key] = get_connection_port(port)
+
+    return display_sockets[key]
+    pass
+
 
 def clear_board(sock):
     clear_panel(sock, 0)
@@ -75,15 +147,7 @@ def calibrate(sock, display, clear=False):
 #5: 30, 12
 #
 
-display_widths = {
-    '0': { 'cols': 80, 'rows': 12, 'right': 1, 'below': 2 },
-    '1': { 'cols': 80, 'rows': 12, 'right': 4, 'below': 3 },
-    '4': { 'cols': 32, 'rows': 12, 'right': -1, 'below': 5 },
 
-    '2': { 'cols': 80, 'rows': 12, 'right': 3, 'below': -1 },
-    '3': { 'cols': 80, 'rows': 12, 'right': 5, 'below': -1 },
-    '5': { 'cols': 32, 'rows': 12, 'right': -1, 'below': -1 }
-}
 
 
 
@@ -315,6 +379,8 @@ def remap_chars(msg):
 def write_to_board(sock, display, row, col, msg):
     global _currentWriteCounter
 
+    # what we're sending...
+    #
     #start byte 0x01
     #display + 0x32
     #row + 0x20
@@ -322,7 +388,6 @@ def write_to_board(sock, display, row, col, msg):
     #message
     #null
     #0x04
-
 
     #str = 'a' + char(31) + str
 
@@ -340,20 +405,19 @@ def write_to_board(sock, display, row, col, msg):
         0x04
     )
 
-
-
     if _currentWriteCounter > maxContinuousWriteChars:
         _currentWriteCounter = 0
         sleep(0.250)
 
     _currentWriteCounter += len(buffer)
 
+    if sock is None:
+        sock = get_connection_split(display, row, col)
 
     #sock.send(buffer)
     sock.sendall(buffer)
-    sleep(0.050)
-
 
     #if we draw too fast, we overwhelm the board.
+    sleep(0.050)
 
     pass

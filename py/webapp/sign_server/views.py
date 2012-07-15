@@ -36,8 +36,9 @@ def mini_board(request):
 
 
 def board_test(request):
+    sock = None
 
-    sock = board.get_connection()
+#    sock = board.get_connection()
     #board.write_to_board(sock, 0, 5, 15, "You have no chance to survive")
     #board.write_to_board(sock, 0, 6, 20, "Make your time")
 
@@ -84,8 +85,9 @@ def board_test(request):
     return HttpResponse(content="Okay")
 
 def calibrate_displays(request):
+    sock = None
     try:
-        sock = board.get_connection()
+#        sock = board.get_connection()
 
         board.calibrate(sock, 0)
         board.calibrate(sock, 1)
@@ -103,8 +105,9 @@ def calibrate_displays(request):
     return HttpResponse(content="Calibrated")
 
 def clear_board(request):
+    sock = None
     try:
-        sock = board.get_connection()
+#        sock = board.get_connection()
 
         board.clear_board(sock)
 
@@ -127,9 +130,9 @@ def time_stamp(request):
     secs = time()
     lastTime = strftime("%a, %d %b %Y %H:%M:%S", localtime(secs) )
     timeLen = len('Thu, 28 Jun 2001 14:17:15')
-
+    sock = None
     try:
-        sock = board.get_connection()
+#        sock = board.get_connection()
 
         #TODO: calculate when clearing is necessary (e.g. when formatted string length changes from prev)
         #board.write_to_board(sock, 4, 0, 0, "                                ")
@@ -153,8 +156,9 @@ def time_stamp(request):
 def rawInterface(request, row, col, msg):
     row = int(row)
     col = int(col)
+    sock = None
     try:
-        sock = board.get_connection()
+#        sock = board.get_connection()
 
         board.write_split(sock, 0, row, col, [ msg ])
         #board.write_to_board(sock, 0, row, col, msg)
@@ -176,8 +180,10 @@ def rawRegionInterface(request, row, rowlimit, col, collimit, msg):
 
     responseMsg = "Running..."
 
+    sock = None
     try:
-        sock = board.get_connection()
+
+#        sock = board.get_connection()
 
 
         board.clear_panel(sock, 1)
@@ -198,34 +204,36 @@ def rawRegionInterface(request, row, rowlimit, col, collimit, msg):
 
 
 def twitter_panel(request):
+    sock = None
     try:
-        sock = board.get_connection()
+        #sock = board.get_connection()
 #        tb = twitter_board.TwitterBoard()
 #        board.clear_panel(sock, 2)
-        board.write_to_board(sock, 2, 0, 0, "*************** Tweets ********************************************************")
+        board.write_to_board(None, 2, 0, 0, "*************** Tweets ********************************************************")
         curRowNum = 1
         for row in twitter.Twitter().getNewTweets(11, 79):
-            board.write_to_board(sock, 2, curRowNum, 0, str(row + ' '))
+            board.write_to_board(None, 2, curRowNum, 0, str(row + ' '))
             curRowNum += 1
     except:
         print "Unexpected error:", sys.exc_info()[0]
     finally:
-        board.close_connection(sock)
+        board.close_connection(None)
 
     return HttpResponse(content="Twitter Board Updated")
 
 
 def info_panel(request):
+    sock = None
     try:
-        sock = board.get_connection()
-#        tb = twitter_board.TwitterBoard()
-        board.clear_panel(sock, 4)
-        board.write_to_board(sock, 4, 0, 1, strftime("%a, %d %B %I:%M%p", localtime(time())))
+        #sock = board.get_connection()
+
+        board.clear_panel(None, 4)
+        board.write_to_board(None, 4, 0, 1, strftime("%a, %d %B %I:%M%p", localtime(time())))
         curRowNum = 1
 
         for row in weather.Weather().getCurrentWeather():
             print row
-            board.write_to_board(sock, 4, curRowNum, 3, str(row))
+            board.write_to_board(None, 4, curRowNum, 3, str(row))
             curRowNum += 1
     except:
         print "Unexpected error:", sys.exc_info()[0]
@@ -262,8 +270,9 @@ def announcements_panel(request):
     return HttpResponse(content="Announcement Board Updated")
 
 def char_test(request):
+    sock = None
     try:
-        sock = board.get_connection()
+#        sock = board.get_connection()
         board.clear_panel(sock, 0)
         i = 0
         while i < 128:
@@ -280,8 +289,9 @@ def char_test(request):
 
 
 def test_chars(request):
+    sock = None
     try:
-        sock = board.get_connection()
+#        sock = board.get_connection()
         board.clear_panel(sock, 0)
 
         curRow = 0
