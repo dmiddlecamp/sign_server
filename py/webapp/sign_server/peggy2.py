@@ -13,6 +13,7 @@ from sign_server.models import BoardLease
 import json
 import md5
 
+MAX_LEASE_SECONDS = 600
 
 def get_current_lease(lease_code):
     search = BoardLease.objects.filter(end_date__gte=safe_datetime.now())
@@ -27,8 +28,8 @@ def get_lease(request, term=1):
     response_data = dict()
 
     term = int(term)
-    if term > 10:
-        term = 10
+    if term > MAX_LEASE_SECONDS:
+        term = MAX_LEASE_SECONDS
 
     search = BoardLease.objects.filter(end_date__gte=safe_datetime.now())
 
@@ -40,7 +41,7 @@ def get_lease(request, term=1):
         m.update(unicode(datetime.now().microsecond.__str__))
         lease_code = m.hexdigest()
 
-        lease_expiry = datetime.now() + timedelta(seconds=term * 60)
+        lease_expiry = datetime.now() + timedelta(seconds=term)
         new_lease = BoardLease(board_lease_code=lease_code, is_active=True, start_date=datetime.now(), end_date=lease_expiry, creation_date=datetime.now())
         new_lease.save()
 
