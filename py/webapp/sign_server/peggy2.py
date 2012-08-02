@@ -60,6 +60,7 @@ def renew_release(request, lease_code, term=1):
     board_lease = get_current_lease(lease_code)
     if board_lease == None:
         generate_error(response_data, "bad_lease_code")
+        add_lease_expiration(response_data, board_lease)
     else:
         lease_expiry = datetime.now() + timedelta(seconds=term)
         board_lease.end_date = lease_expiry
@@ -77,6 +78,7 @@ def expire_lease(request, lease_code):
     board_lease = get_current_lease(lease_code)
     if board_lease is None:
         generate_error(response_data, 'bad_lease_code')
+        add_lease_expiration(response_data, board_lease)
     else:
         board_lease.end_date = datetime.now()
         board_lease.save()
@@ -90,6 +92,7 @@ def clear_board(request, lease_code, row=None):
     board_lease = get_current_lease(lease_code)
     if board_lease == None:
         generate_error(response_data, "bad_lease_code")
+        add_lease_expiration(response_data, board_lease)
     else:
         peggy_tasks.clear_board(row)
         response_data['result'] = "success"
@@ -117,6 +120,7 @@ def write_to_board(request, lease_code=1, row=0, col=0, msg=''):
 
     if board_lease == None:
         generate_error(response_data, "bad_lease_code")
+        add_lease_expiration(response_data, board_lease)
     else:
         peggy_tasks.write_to_board(int(row), int(col), board_lease.current_color + msg)
         response_data['result'] = "success"
@@ -129,6 +133,7 @@ def set_color(request, lease_code=1, color='green'):
     board_lease = get_current_lease(lease_code)
     if board_lease == None:
         generate_error(response_data, "bad_lease_code")
+        add_lease_expiration(response_data, board_lease)
     else:
         new_color = None
         if color == 'green':
