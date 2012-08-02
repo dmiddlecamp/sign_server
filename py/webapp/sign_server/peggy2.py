@@ -26,7 +26,7 @@ def get_current_lease(lease_code):
 def add_lease_expiration(response_data, lease):
     response_data["lease_seconds_remaining"] = int(datetime.now() - lease.start_date)
 
-def get_lease(request, term=1):
+def get_lease(request, term=60, top_row=0, left_col=0, bottom_row=11, right_col=79):
     response_data = dict()
 
     term = int(term)
