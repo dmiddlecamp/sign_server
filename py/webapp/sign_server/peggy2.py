@@ -44,7 +44,7 @@ def get_lease(request, term=60, top_row=0, left_col=0, bottom_row=11, right_col=
         lease_code = m.hexdigest()
 
         lease_expiry = datetime.now() + timedelta(seconds=term)
-        new_lease = BoardLease(board_lease_code=lease_code, is_active=True, start_date=datetime.now(), end_date=lease_expiry, creation_date=datetime.now())
+        new_lease = BoardLease(board_lease_code=lease_code, is_active=True, start_date=datetime.now(), end_date=lease_expiry, top_row=top_row, left_col=left_col, bottom_row=bottom_row, right_col=right_col, creation_date=datetime.now())
         new_lease.save()
 
         response_data['result'] = 'success'
