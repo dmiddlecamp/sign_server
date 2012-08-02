@@ -37,6 +37,7 @@ def get_lease(request, term=60, top_row=0, left_col=0, bottom_row=11, right_col=
     search = BoardLease.objects.filter(end_date__gte=safe_datetime.now())
 
     if search.count() > 0:
+        # TODO: check for conflicts with coordinates per github issue #3
         generate_error(response_data, "in_use")
         add_lease_expiration(response_data, search.get())
     else:
