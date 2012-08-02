@@ -57,6 +57,11 @@ def get_lease(request, term=60, top_row=0, left_col=0, bottom_row=11, right_col=
 
 def renew_lease(request, lease_code, term=1):
     response_data = dict()
+
+    term = int(term)
+    if term > MAX_LEASE_SECONDS:
+        term = MAX_LEASE_SECONDS
+
     board_lease = get_current_lease(lease_code)
     if board_lease == None:
         generate_error(response_data, "bad_lease_code")
