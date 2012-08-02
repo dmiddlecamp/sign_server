@@ -54,6 +54,19 @@ def get_lease(request, term=1):
     return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 
+def expire_lease(request, lease_code):
+    board_lease = get_current_lease(lease_code)
+    if board_lease is None:
+        response_data['result'] = 'failure'
+        response_data['reason_code'] = 'bad_lease_code'
+    else:
+        board_lease.end_date = datetime.now()
+        board_lease.save()
+        response_data['result'] = 'success'
+
+    return HttpResponse(json.dumps(response_data), mimetype='application/json')
+
+
 def clear_board(request, lease_code, row=None):
     response_data = dict()
     board_lease = get_current_lease(lease_code)
