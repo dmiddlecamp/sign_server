@@ -72,6 +72,7 @@ def renew_release(request, lease_code, term=1):
     return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 def expire_lease(request, lease_code):
+    response_data = dict()
     board_lease = get_current_lease(lease_code)
     if board_lease is None:
         response_data['result'] = 'failure'
