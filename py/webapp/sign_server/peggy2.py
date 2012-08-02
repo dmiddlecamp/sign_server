@@ -107,6 +107,13 @@ def write_to_board(request, lease_code=1, row=0, col=0, msg=''):
         msg = request.POST['msg']
     response_data = dict()
     board_lease = get_current_lease(lease_code)
+
+    if board_lease.top_row:
+        row = row + board_lease.top_row
+
+    if board_lease.left_col:
+        col = col + board_lease.left_col
+
     if board_lease == None:
         generate_error(response_data, "bad_lease_code")
     else:
