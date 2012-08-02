@@ -27,7 +27,7 @@ def add_lease_expiration(response_data, lease):
     seconds_remaining = lease.end_date - datetime.now()
     response_data["lease_seconds_remaining"] = int(seconds_remaining.total_seconds())
 
-def get_lease(request, term=60, top_row=0, left_col=0, bottom_row=11, right_col=79):
+def get_lease(request, term="60", top_row="0", left_col="0", bottom_row="11", right_col="79"):
     response_data = dict()
 
     term = int(term)
@@ -45,7 +45,7 @@ def get_lease(request, term=60, top_row=0, left_col=0, bottom_row=11, right_col=
         lease_code = m.hexdigest()
 
         lease_expiry = datetime.now() + timedelta(seconds=term)
-        new_lease = BoardLease(board_lease_code=lease_code, is_active=True, start_date=datetime.now(), end_date=lease_expiry, top_row=top_row, left_col=left_col, bottom_row=bottom_row, right_col=right_col, creation_date=datetime.now())
+        new_lease = BoardLease(board_lease_code=lease_code, is_active=True, start_date=datetime.now(), end_date=lease_expiry, top_row=int(top_row), left_col=int(left_col), bottom_row=int(bottom_row), right_col=int(right_col), creation_date=datetime.now())
         new_lease.save()
 
         response_data['result'] = 'success'
