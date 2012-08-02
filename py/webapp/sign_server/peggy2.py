@@ -24,6 +24,7 @@ def get_current_lease(lease_code):
         return None
 
 
+
 def get_lease(request, term=1):
     response_data = dict()
 
@@ -34,8 +35,7 @@ def get_lease(request, term=1):
     search = BoardLease.objects.filter(end_date__gte=safe_datetime.now())
 
     if search.count() > 0:
-        response_data['result'] = 'failure'
-        response_data['reason_code'] = 'in_use'
+        generate_error(response_data, "in_use")
     else:
         m = md5.new()
         m.update(unicode(datetime.now().microsecond.__str__))
@@ -55,8 +55,7 @@ def get_lease(request, term=1):
 def clear_board(request, lease_code, row=None):
     response_data = dict()
     if get_current_lease(lease_code) == None:
-        response_data['result'] = "failure"
-        response_data['reason_code'] = "bad_lease_code"
+        generate_error(response_data, "bad_lease_code")
     else:
         peggy_tasks.clear_board(row)
         response_data['result'] = "success"
@@ -75,8 +74,7 @@ def write_to_board(request, lease_code=1, row=0, col=0, msg=''):
     response_data = dict()
     board_lease = get_current_lease(lease_code)
     if board_lease == None:
-        response_data['result'] = "failure"
-        response_data['reason_code'] = "bad_lease_code"
+        generate_error(response_data, "bad_lease_code")
     else:
         peggy_tasks.write_to_board(int(row), int(col), board_lease.current_color + msg)
         response_data['result'] = "success"
@@ -87,8 +85,7 @@ def set_color(request, lease_code=1, color='green'):
     response_data = dict()
     board_lease = get_current_lease(lease_code)
     if board_lease == None:
-        response_data['result'] = "failure"
-        response_data['reason_code'] = "bad_lease_code"
+        generate_error(response_data, "bad_lease_code")
     else:
         new_color = None
         if color == 'green':
@@ -98,8 +95,7 @@ def set_color(request, lease_code=1, color='green'):
         elif color == 'orange':
             new_color = chr(31)
         else:
-            response_data['result'] = "failure"
-            response_data['reason_code'] = "unknown_color"
+            generate_error(response_data, "unknown_color")
 
         if new_color != None:
             board_lease.current_color = new_color
@@ -107,3 +103,7 @@ def set_color(request, lease_code=1, color='green'):
             board_lease.save()
 
     return HttpResponse(json.dumps(response_data), mimetype="application/json")
+
+def generate_error(response_data, reason_code):
+    response_data['result'] = "failure"
+    response_data['reason_code'] = reason_code
