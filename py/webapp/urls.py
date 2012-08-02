@@ -32,7 +32,6 @@ urlpatterns = patterns('',
     url(r'^raw/(?P<row>.*)/(?P<col>.*)/(?P<msg>.*)', 'sign_server.views.rawInterface'),
     url(r'^rawBox/(?P<row>.*)-(?P<rowlimit>.*)/(?P<col>.*)-(?P<collimit>.*)/(?P<msg>.*)', 'sign_server.views.rawRegionInterface'),
 
-
     url(r'^peggy/get_lease$', 'sign_server.peggy.get_lease'),
     url(r'^peggy/get_lease/(?P<term>.*)', 'sign_server.peggy.get_lease'),
     url(r'^peggy/clear/(?P<lease_code>.*)/(?P<row>.*)', 'sign_server.peggy.clear_board'),
@@ -43,9 +42,8 @@ urlpatterns = patterns('',
     url(r'^peggy/set_color$', 'sign_server.peggy.set_color'),
     url(r'^peggy/set_color/(?P<lease_code>.*)/(?P<color>.*)', 'sign_server.peggy.set_color'),
 
-    url(r'^peggy/2/get_lease/(?P<topRow>)/(?P<topCol>)/(?P<bottomRow>)/(?P<bottomCol>)/(?P<term>.*)', 'sign_server.peggy2.get_lease'),
-
-    
+    url(r'^peggy/2/get_lease/(?P<top_row>)/(?P<top_col>)/(?P<bottom_row>)/(?P<bottom_col>)/(?P<term>.*)', 'sign_server.peggy2.get_lease'),
+    url(r'^peggy/2/renew_lease/(?P<lease_code>)/(?P<term>)', 'sign_server.peggy2.renew_lease'),
 
     # url(r'^sign_server/', include('sign_server.foo.urls')),
 
