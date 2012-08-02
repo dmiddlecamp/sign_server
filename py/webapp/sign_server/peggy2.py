@@ -27,7 +27,7 @@ def add_lease_expiration(response_data, lease):
     seconds_remaining = lease.end_date - datetime.now()
     response_data["lease_seconds_remaining"] = int(seconds_remaining.total_seconds())
 
-def get_lease(request, term="60", top_row="0", left_col="0", bottom_row="11", right_col="79"):
+def get_lease(request, term=60, top_row=0, left_col=0, bottom_row=11, right_col=79):
     response_data = dict()
 
     term = int(term)
