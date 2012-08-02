@@ -44,7 +44,7 @@ urlpatterns = patterns('',
 
     url(r'^peggy/2/get_lease/(?P<term>.*)/(?P<top_row>.*)/(?P<left_col>.*)/(?P<bottom_row>.*)/(?P<right_col>.*)', 'sign_server.peggy2.get_lease'),
     url(r'^peggy/2/renew_lease/(?P<lease_code>)/(?P<term>)', 'sign_server.peggy2.renew_lease'),
-    utl(r'^peggy/2/expire_lease/(?P<lease_code>)', 'sign_server.peggy2.expire_lease'),
+    url(r'^peggy/2/expire_lease/(?P<lease_code>)', 'sign_server.peggy2.expire_lease'),
     url(r'^peggy/2/clear/(?P<lease_code>.*)', 'sign_server.peggy2.clear_board'),
     url(r'^peggy/2/write/(?P<lease_code>.*)/(?P<row>.*)/(?P<col>.*)/(?P<msg>.*)', 'sign_server.peggy2.write'),
     url(r'^peggy/2/set_color/(?P<lease_code>.*)/(?P<color>.*)', 'sign_server.peggy2.set_color'),
