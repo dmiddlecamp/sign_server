@@ -24,7 +24,7 @@ def get_current_lease(lease_code):
         return None
 
 def add_lease_expiration(response_data, lease):
-    seconds_remaining = datetime.now() - lease.end_date
+    seconds_remaining = lease.end_date - datetime.now()
     response_data["lease_seconds_remaining"] = int(seconds_remaining.total_seconds())
 
 def get_lease(request, term=60, top_row=0, left_col=0, bottom_row=11, right_col=79):
@@ -38,6 +38,7 @@ def get_lease(request, term=60, top_row=0, left_col=0, bottom_row=11, right_col=
 
     if search.count() > 0:
         generate_error(response_data, "in_use")
+        add_lease_expiration(response_data, search.get())
     else:
         m = md5.new()
         m.update(unicode(datetime.now().microsecond.__str__))
