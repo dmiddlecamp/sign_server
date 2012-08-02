@@ -24,7 +24,7 @@ def get_current_lease(lease_code):
         return None
 
 def add_lease_expiration(response_data, lease):
-    seconds_remaining = datetime.now() - lease.end_date
+    seconds_remaining = lease.end_date - datetime.now()
     response_data["lease_seconds_remaining"] = int(seconds_remaining.total_seconds())
 
 def get_lease(request, term=60, top_row=0, left_col=0, bottom_row=11, right_col=79):
@@ -38,6 +38,7 @@ def get_lease(request, term=60, top_row=0, left_col=0, bottom_row=11, right_col=
 
     if search.count() > 0:
         generate_error(response_data, "in_use")
+        add_lease_expiration(response_data, search.get())
     else:
         m = md5.new()
         m.update(unicode(datetime.now().microsecond.__str__))
@@ -59,6 +60,7 @@ def renew_release(request, lease_code, term=1):
     board_lease = get_current_lease(lease_code)
     if board_lease == None:
         generate_error(response_data, "bad_lease_code")
+        add_lease_expiration(response_data, board_lease)
     else:
         lease_expiry = datetime.now() + timedelta(seconds=term)
         board_lease.end_date = lease_expiry
@@ -76,6 +78,7 @@ def expire_lease(request, lease_code):
     board_lease = get_current_lease(lease_code)
     if board_lease is None:
         generate_error(response_data, 'bad_lease_code')
+        add_lease_expiration(response_data, board_lease)
     else:
         board_lease.end_date = datetime.now()
         board_lease.save()
@@ -89,6 +92,7 @@ def clear_board(request, lease_code, row=None):
     board_lease = get_current_lease(lease_code)
     if board_lease == None:
         generate_error(response_data, "bad_lease_code")
+        add_lease_expiration(response_data, board_lease)
     else:
         peggy_tasks.clear_board(row)
         response_data['result'] = "success"
@@ -116,6 +120,7 @@ def write_to_board(request, lease_code=1, row=0, col=0, msg=''):
 
     if board_lease == None:
         generate_error(response_data, "bad_lease_code")
+        add_lease_expiration(response_data, board_lease)
     else:
         peggy_tasks.write_to_board(int(row), int(col), board_lease.current_color + msg)
         response_data['result'] = "success"
@@ -128,6 +133,7 @@ def set_color(request, lease_code=1, color='green'):
     board_lease = get_current_lease(lease_code)
     if board_lease == None:
         generate_error(response_data, "bad_lease_code")
+        add_lease_expiration(response_data, board_lease)
     else:
         new_color = None
         if color == 'green':
