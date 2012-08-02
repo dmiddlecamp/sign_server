@@ -69,7 +69,7 @@ def renew_release(request, lease_code, term=1):
         response_data['result'] = 'success'
         response_data['lease_code'] = lease_code
         response_data['lease_expiry'] = str(lease_expiry)
-        add_lease_expiration(response_data, new_lease)
+        add_lease_expiration(response_data, board_lease)
 
     return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
