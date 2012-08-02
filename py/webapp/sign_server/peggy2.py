@@ -75,8 +75,7 @@ def expire_lease(request, lease_code):
     response_data = dict()
     board_lease = get_current_lease(lease_code)
     if board_lease is None:
-        response_data['result'] = 'failure'
-        response_data['reason_code'] = 'bad_lease_code'
+        generate_error(response_data, 'bad_lease_code')
     else:
         board_lease.end_date = datetime.now()
         board_lease.save()
