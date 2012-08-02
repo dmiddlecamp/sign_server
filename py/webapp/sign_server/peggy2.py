@@ -53,6 +53,22 @@ def get_lease(request, term=1):
 
     return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
+def renew_release(request, lease_code, term=1):
+    response_data = dict()
+    board_lease = get_current_lease(lease_code)
+    if board_lease == None:
+        generate_error(response_data, "bad_lease_code")
+    else:
+        lease_expiry = datetime.now() + timedelta(seconds=term)
+        board_lease.end_date = lease_expiry
+        board_lease.save()
+
+        response_data['result'] = 'success'
+        response_data['lease_code'] = lease_code
+        response_data['lease_expiry'] = str(lease_expiry)
+        add_lease_expiration(response_data, new_lease)
+
+    return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 def expire_lease(request, lease_code):
     board_lease = get_current_lease(lease_code)
