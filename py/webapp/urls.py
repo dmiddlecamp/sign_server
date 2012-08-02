@@ -43,6 +43,9 @@ urlpatterns = patterns('',
     url(r'^peggy/set_color$', 'sign_server.peggy.set_color'),
     url(r'^peggy/set_color/(?P<lease_code>.*)/(?P<color>.*)', 'sign_server.peggy.set_color'),
 
+    url(r'^peggy/2/get_lease/(?P<topRow>)/(?P<topCol>)/(?P<bottomRow>)/(?P<bottomCol>)/(?P<term>.*)', 'sign_server.peggy2.get_lease'),
+
+    
 
     # url(r'^sign_server/', include('sign_server.foo.urls')),
 
