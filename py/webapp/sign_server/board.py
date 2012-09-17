@@ -174,21 +174,21 @@ def write_line_split(sock, display, row, col, line, maxCol=-1):
     while charsToWrite > 0:
         displayWidth = display_widths[str(display)]['cols']
 
-        if col > displayWidth:
-            #move to the next board
-            col -= displayWidth
-            nextdisplay = display_widths[str(display)]['right']
-            if nextdisplay < 0:
-                return line + leftoversStr     #we don't have anywhere to go, bail
-
-            display = nextdisplay
-
         lastCharToDisplay = min(displayWidth - col, len(line))
         write_to_board(sock, display, row, col, line[0: lastCharToDisplay] )
 
         lastColor = findLastColor(line[0: lastCharToDisplay])
 
         line = line[lastCharToDisplay:]
+
+        if lastCharToDisplay == displayWidth:
+             #move to the next board
+            col = 0
+            nextdisplay = display_widths[str(display)]['right']
+            if nextdisplay < 0:
+                return line + leftoversStr     #we don't have anywhere to go, bail
+            display = nextdisplay
+
 
         #something like this, where what we write doesn't have to perfectly line up, or something...
         #if lastColor > 0:
@@ -304,8 +304,7 @@ def write_split(sock, display, row, col, lines):
 
 def write_file(filename):
     f = open(filename, 'r')
-    sock = get_connection()
-    write_split(sock, 0, 0, 0, f.readlines())
+    write_split(None, 0, 0, 0, f.readlines())
     close_connection(sock)
 
     #TODO: write inside a bounding box, wrapping rows as we go
