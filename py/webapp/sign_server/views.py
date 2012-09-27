@@ -120,9 +120,14 @@ def clear_board(request):
 
 
 def file_test(request):
-    board.write_file('/projects/sign_server/happy_friday.txt')
-
+    board.write_file('/projects/sign_server/happy_don.txt')
     return HttpResponse(content="Displayed Test")
+
+def specific_file_test(request, file):
+    board.write_file('/projects/sign_server/' + file + '.txt')
+    return HttpResponse(content="Displayed Test " + file)
+
+
 
 
 def time_stamp(request):

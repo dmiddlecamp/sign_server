@@ -17,6 +17,8 @@ urlpatterns = patterns('',
     url(r'^board_test/$', 'sign_server.views.board_test'),
     url(r'^calibrate_displays/$', 'sign_server.views.calibrate_displays'),
     url(r'^file_test/$', 'sign_server.views.file_test'),
+    url(r'^file_test/(?P<file>\w+)$', 'sign_server.views.specific_file_test'),
+
     url(r'^clear_board/$', 'sign_server.views.clear_board'),
     url(r'^time_stamp/$', 'sign_server.views.time_stamp'),
     url(r'^twitter_board/$', 'sign_server.views.twitter_panel'),
