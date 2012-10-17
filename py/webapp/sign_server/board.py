@@ -321,7 +321,7 @@ def write_split(sock, display, row, col, lines):
 def write_file(filename):
     f = open(filename, 'r')
     write_split(None, 0, 0, 0, f.readlines())
-    close_connection(sock)
+    #close_connection(sock)
 
     #TODO: write inside a bounding box, wrapping rows as we go
     #try to detect and preserve colors
