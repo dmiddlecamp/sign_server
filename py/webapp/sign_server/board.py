@@ -10,8 +10,9 @@ __author__ = 'middleca'
 BOARD_IP = '10.1.3.250'
 BOARD_PORT = 25
 
-BOARD_PORT_BOTTOM = 25
 BOARD_PORT_TOP = 26
+BOARD_PORT_BOTTOM = 27
+
 
 maxContinuousWriteChars = 4 * 192
 _currentWriteCounter = 0
@@ -78,6 +79,21 @@ def close_connection(sock):
 
     pass
 
+def reset_connection_split(display, row, col):
+    port = None
+    global display_sockets
+    global display_widths
+
+    if display is not None:
+        port = display_widths[str(display)]['port']
+
+    if port is None:
+        #TODO: figure out where we are... but I think we shouldn't get here.
+        pass
+
+    key = str(port)
+    display_sockets[key] = get_connection_port(port)
+    return display_sockets[key]
 
 
 def get_connection_split(display, row, col):
@@ -414,7 +430,13 @@ def write_to_board(sock, display, row, col, msg):
         sock = get_connection_split(display, row, col)
 
     #sock.send(buffer)
-    sock.sendall(buffer)
+    try:
+        sock.sendall(buffer)
+    except Exception, e:
+        # we probably lost the connection...
+        sock = reset_connection_split(display, row, col)
+        sock.sendall(buffer)
+
 
     #if we draw too fast, we overwhelm the board.
     sleep(0.050)
