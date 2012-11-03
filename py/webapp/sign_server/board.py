@@ -358,7 +358,7 @@ def write_file(filename):
 
 def write_file_coords(filename, row, col):
     f = open(filename, 'r')
-    write_split(None, 0, row, col, f.readlines())
+    write_split(None, -1, row, col, f.readlines())
 
 def write_region_wrap(sock, display, row, col, msg, maxRow, maxCol):
     """
