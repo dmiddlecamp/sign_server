@@ -316,9 +316,9 @@ def find_display_for(row, col, fix_coords=False):
                 if fix_coords:
                     row = row - r
                     col = col - c
-                    return display_key, row, col,
+                    return int(display_key), row, col
                 else:
-                    return display_key
+                    return int(display_key)
 
         r = r + info['rows']
         c = c + info['cols']
@@ -448,7 +448,7 @@ def write_to_board(sock, display, row, col, msg):
     buffer = array.array('B', str(0) * (5+len(msg)))
     pack_into('BBBB'+ str(len(msg)) + 'sB', buffer, 0,
         0x01,
-        display + 32,
+        int(display) + 32,
         row + 0x20,
         col + 0x20,
         str(msg),
