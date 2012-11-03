@@ -300,7 +300,7 @@ def countControlCodes(msg):
 
 
 
-def find_display_for(row, col):
+def find_display_for(row, col, fix_coords=False):
     '''Finds the correct display for a given row/column'''
 
     global display_widths
@@ -313,7 +313,12 @@ def find_display_for(row, col):
 
         if (row >= r) and (row < (r + info['rows'])):
             if (col >= c) and (col < (c + info['cols'])):
-                return display_key
+                if fix_coords:
+                    row = row - r
+                    col = col - c
+                    return display_key, row, col,
+                else:
+                    return display_key
 
         r = r + info['rows']
         c = c + info['cols']
@@ -325,7 +330,7 @@ def find_display_for(row, col):
 
 def write_split(sock, display, row, col, lines):
     if display < 0:
-        display = find_display_for(row, col)
+        display, row, col = find_display_for(row, col, fix_coords=True)
 
     maxRows = display_widths[str(display)]['rows']
 
