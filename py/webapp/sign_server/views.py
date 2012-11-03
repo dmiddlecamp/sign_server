@@ -8,6 +8,7 @@ from sign_server.board_updater import updateTwitterBoard, updateNetworkStatus
 from sign_server.models import Announcement
 from time import time, localtime, strftime
 import sys
+import os, random
 
 def home(request):
     return render_to_response('sign_server/home.html')
@@ -127,6 +128,16 @@ def specific_file_test(request, file):
     board.write_file('/projects/sign_server/' + file + '.txt')
     return HttpResponse(content="Displayed Test " + file)
 
+def random_file_test(request):
+    src_dir = '/projects/sign_server/spark'
+    rand_file = random.choice(os.listdir(src_dir))
+
+    #pick random coordinates:
+    row = random.randint(0, 23) #all the way down
+    col = random.randint(0, 180)    #most of the way down
+
+    board.write_file_coords(rand_file, row, col)
+    return HttpResponse(content="Displayed Test " + rand_file)
 
 
 

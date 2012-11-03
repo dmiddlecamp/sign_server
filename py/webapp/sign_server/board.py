@@ -329,6 +329,10 @@ def write_file(filename):
     # i.e. a color should be detected and wrapped to the start of the next row
 
 
+def write_file_coords(filename, row, col):
+    f = open(filename, 'r')
+    write_split(None, 0, row, col, f.readlines())
+
 def write_region_wrap(sock, display, row, col, msg, maxRow, maxCol):
     """
     Takes a very long 'msg' and wraps it in the provided bounds
