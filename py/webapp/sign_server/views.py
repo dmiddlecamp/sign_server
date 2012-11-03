@@ -133,10 +133,10 @@ def random_file_test(request):
     rand_file = random.choice(os.listdir(src_dir))
 
     #pick random coordinates:
-    row = random.randint(0, 23) #all the way down
+    #row = random.randint(0, 23) #all the way down
     col = random.randint(0, 180)    #most of the way down
 
-    board.write_file_coords(rand_file, row, col)
+    board.write_file_coords(rand_file, 0, col)
     return HttpResponse(content="Displayed Test " + rand_file)
 
 
