@@ -9,6 +9,7 @@ from sign_server.models import Announcement
 from time import time, localtime, strftime
 import logging
 import socket
+import settings
 import sys, os, random
 
 
@@ -43,12 +44,22 @@ def updateInfoBoard(foo, bar):
     sock = None
     try:
         #sock = board.get_connection()
-        board.clear_panel(sock, 4)
-        board.write_to_board(sock, 4, 0, 1, strftime("%a, %d %B %I:%M%p", localtime(time())))
+        #board.clear_panel(sock, 4)
+
+        clearStr = ' '.rjust(32)
+        board.write_to_board(sock, 4, 0, 0, clearStr)
+        if settings.MINI_TIME_TEMP:
+            board.write_to_board(sock, 6, 6, 0, clearStr)
+
+        timeStamp = localtime(time())
+        board.write_to_board(sock, 4, 0, 1, strftime("%a, %d %B %I:%M%p", timeStamp))
+        if settings.MINI_TIME_TEMP:
+            board.write_to_board(sock, 6, 6, 0, strftime("%A, %d %B %I:%M%p", timeStamp))
         curRowNum = 1
 
         for row in weatherRows:
             print row
+            board.write_to_board(sock, 4, curRowNum, 3, clearStr)
             board.write_to_board(sock, 4, curRowNum, 3, str(row))
             curRowNum += 1
     except:

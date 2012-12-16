@@ -211,3 +211,5 @@ CELERYBEAT_SCHEDULE = {
 }
 
 djcelery.setup_loader()
+
+MINI_TIME_TEMP=True
