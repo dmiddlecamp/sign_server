@@ -35,6 +35,9 @@ urlpatterns = patterns('',
 
     url(r'^raw/(?P<row>.*)/(?P<col>.*)/(?P<msg>.*)', 'sign_server.views.rawInterface'),
     url(r'^rawBox/(?P<row>.*)-(?P<rowlimit>.*)/(?P<col>.*)-(?P<collimit>.*)/(?P<msg>.*)', 'sign_server.views.rawRegionInterface'),
+    url(r'^mini/(?P<row>.*)/(?P<col>.*)/(?P<msg>.*)', 'sign_server.views.miniWrite'),
+
+
 
     url(r'^peggy/get_lease$', 'sign_server.peggy.get_lease'),
     url(r'^peggy/get_lease/(?P<term>.*)', 'sign_server.peggy.get_lease'),

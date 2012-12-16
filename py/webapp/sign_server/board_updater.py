@@ -9,9 +9,32 @@ from sign_server.models import Announcement
 from time import time, localtime, strftime
 import logging
 import socket
-import sys
+import sys, os, random
+
 
 logger = logging.getLogger(__name__)
+
+random_counter = 0
+
+
+@task()
+def random_fileBoard(foo, bar):
+    global random_counter
+
+    logger.warn("randomfile called")
+
+    random_counter = random_counter + 1
+    if random_counter > 9:
+        random_counter = 0
+        board.clear_board(None)
+        return
+    else:
+        src_dir = '/projects/sign_server/spark/'
+        rand_file = random.choice(os.listdir(src_dir))
+        row = random.randint(0, 4) #all the way down
+        col = random.randint(0, 160)    
+        board.write_file_coords(src_dir + rand_file, row, col)
+
 
 @task()
 def updateInfoBoard(foo, bar):

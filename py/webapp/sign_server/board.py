@@ -4,6 +4,9 @@ import array
 import re
 import socket
 import sys
+import logging
+
+logger = logging.getLogger("default")
 
 __author__ = 'middleca'
 
@@ -14,6 +17,9 @@ BOARD_PORT_TOP = 26
 BOARD_PORT_BOTTOM = 27
 
 
+BOARD_IP_MINI = '10.1.3.252'
+BOARD_PORT_MINI = 26
+
 maxContinuousWriteChars = 4 * 192
 _currentWriteCounter = 0
 
@@ -22,13 +28,16 @@ display_sockets = {
 }
 
 display_widths = {
-    '0': { 'cols': 80, 'rows': 12, 'right': 1, 'below': 2, 'port': BOARD_PORT_TOP },
-    '1': { 'cols': 80, 'rows': 12, 'right': 4, 'below': 3, 'port': BOARD_PORT_TOP },
-    '4': { 'cols': 32, 'rows': 12, 'right': -1, 'below': 5, 'port': BOARD_PORT_TOP },
+    '0': { 'cols': 80, 'rows': 12, 'right': 1, 'below': 2, 'port': BOARD_PORT_TOP, 'ip': BOARD_IP },
+    '1': { 'cols': 80, 'rows': 12, 'right': 4, 'below': 3, 'port': BOARD_PORT_TOP, 'ip': BOARD_IP },
+    '4': { 'cols': 32, 'rows': 12, 'right': -1, 'below': 5, 'port': BOARD_PORT_TOP, 'ip': BOARD_IP },
 
-    '2': { 'cols': 80, 'rows': 12, 'right': 3, 'below': -1, 'port': BOARD_PORT_BOTTOM },
-    '3': { 'cols': 80, 'rows': 12, 'right': 5, 'below': -1, 'port': BOARD_PORT_BOTTOM },
-    '5': { 'cols': 32, 'rows': 12, 'right': -1, 'below': -1, 'port': BOARD_PORT_BOTTOM }
+    '2': { 'cols': 80, 'rows': 12, 'right': 3, 'below': -1, 'port': BOARD_PORT_BOTTOM, 'ip': BOARD_IP },
+    '3': { 'cols': 80, 'rows': 12, 'right': 5, 'below': -1, 'port': BOARD_PORT_BOTTOM, 'ip': BOARD_IP },
+    '5': { 'cols': 32, 'rows': 12, 'right': -1, 'below': -1, 'port': BOARD_PORT_BOTTOM, 'ip': BOARD_IP },
+
+    '6': { 'cols': 80, 'rows': 10, 'right': -1, 'below': -1, 'port': BOARD_PORT_MINI, 'ip': BOARD_IP_MINI },
+
 }
 
 
@@ -47,7 +56,7 @@ def get_connection():
 
     return sock
 
-def get_connection_port(port):
+def get_connection_port(ip, port):
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     except socket.error, msg:
@@ -55,7 +64,7 @@ def get_connection_port(port):
         sys.exit(1)
 
     try:
-        sock.connect((BOARD_IP, port))
+        sock.connect((ip, port))
     except socket.error, msg:
         sys.stderr.write("[ERROR] %s\n" % msg[1])
         sys.exit(2)
@@ -81,18 +90,22 @@ def close_connection(sock):
 
 def reset_connection_split(display, row, col):
     port = None
+    ip = None
     global display_sockets
     global display_widths
 
+
     if display is not None:
-        port = display_widths[str(display)]['port']
+	obj = display_widths[str(display)]
+        port = obj['port']
+	ip = obj['ip']
 
     if port is None:
         #TODO: figure out where we are... but I think we shouldn't get here.
         pass
 
-    key = str(port)
-    display_sockets[key] = get_connection_port(port)
+    key = str(ip) + str(port)
+    display_sockets[key] = get_connection_port(ip, port)
     return display_sockets[key]
 
 
@@ -101,11 +114,13 @@ def get_connection_split(display, row, col):
     This function should grab or create a cached socket, not sure when to close it!
     '''
     port = None
+    ip = None
     global display_sockets
     global display_widths
 
     if display is not None:
         port = display_widths[str(display)]['port']
+        ip = display_widths[str(display)]['ip']
 
     if port is None:
         #TODO: figure out where we are... but I think we shouldn't get here.
@@ -114,7 +129,7 @@ def get_connection_split(display, row, col):
     key = str(port)
 
     if display_sockets.has_key(key) is False:
-        display_sockets[key] = get_connection_port(port)
+        display_sockets[key] = get_connection_port(ip, port)
 
     return display_sockets[key]
     pass
@@ -191,14 +206,15 @@ def write_line_split(sock, display, row, col, line, maxCol=-1):
         displayWidth = display_widths[str(display)]['cols']
 
         lastCharToDisplay = min(displayWidth - col, len(line))
+        #logger.info("write_line_split, %d, %d, %d" % (display, row, col, ))
         write_to_board(sock, display, row, col, line[0: lastCharToDisplay] )
 
         lastColor = findLastColor(line[0: lastCharToDisplay])
-
         line = line[lastCharToDisplay:]
 
-        if lastCharToDisplay == displayWidth:
-             #move to the next board
+        #logger.info("write_line_split, lastchar / displayWidth %d, %d " % (lastCharToDisplay, displayWidth - col, ))
+        if lastCharToDisplay >= (displayWidth - col):
+            #move to the next board
             col = 0
             nextdisplay = display_widths[str(display)]['right']
             if nextdisplay < 0:
@@ -316,21 +332,26 @@ def find_display_for(row, col, fix_coords=False):
                 if fix_coords:
                     row = row - r
                     col = col - c
-                    return int(display_key), row, col
+                    return (int(display_key), row, col, )
                 else:
-                    return int(display_key)
+                    return (int(display_key), row, col, )
 
-        r = r + info['rows']
-        c = c + info['cols']
+        if info['right'] == -1:
+            #move down
+            r = r + info['rows']
+            c = 0
+        else:
+            #move right
+            c = c + info['cols']
 
         pass #end of loops
 
-    return 0
+    return (0, 0, 0, )
 
 
 def write_split(sock, display, row, col, lines):
     if display < 0:
-        display, row, col = find_display_for(row, col, fix_coords=True)
+        (display, row, col) = find_display_for(row, col, fix_coords=True)
 
     maxRows = display_widths[str(display)]['rows']
 

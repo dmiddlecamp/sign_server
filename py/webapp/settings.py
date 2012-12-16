@@ -146,12 +146,31 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
+        'file': {
+          'level': 'DEBUG',
+          'class':'logging.handlers.RotatingFileHandler',
+          'filename': '/projects/sign_server/logs/server.log',
+          'maxBytes': 1024*1024*5, # 5 MB
+          'backupCount': 5,
+          'formatter':'simple',
+        },
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler'
         }
     },
+    'formatters': {
+        'simple': {
+            'format': '%(asctime)s %(levelname)s %(name)s %(message)s'
+        },
+    },
     'loggers': {
+        'default': {
+           'handlers': ['file', ],
+           'level': 'DEBUG',
+        },
+
+
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
@@ -183,6 +202,12 @@ CELERYBEAT_SCHEDULE = {
         "schedule": timedelta(seconds=60),
         "args": (1, 2)
     },
+    #"random_file_updater": {
+    #    "task": "sign_server.board_updater.random_fileBoard",
+    #    "schedule": timedelta(seconds=15),
+    #    "args": (1, 2)
+    #},
+
 }
 
 djcelery.setup_loader()

@@ -133,8 +133,7 @@ def random_file_test(request):
     rand_file = random.choice(os.listdir(src_dir))
 
     #pick random coordinates:
-    #row = random.randint(0, 23) #all the way down
-    row = 0
+    row = random.randint(0, 12)     #row = 0
     col = random.randint(0, 180)    #most of the way down
 
     board.write_file_coords(src_dir + rand_file, row, col)
@@ -167,6 +166,20 @@ def time_stamp(request):
         board.close_connection(sock)
 
     return HttpResponse(content="Written")
+
+def miniWrite(request, row, col, msg):
+    row = int(row)
+    col = int(col)
+    sock = board.get_connection_port('10.1.3.252', 26)
+    try:
+	board.write_to_board(sock, 6, row, col, msg)
+	#board.write_to_board(sock, 7, row, col, "Test 123")
+        board.close_connection(sock)
+    except:
+        board.close_connection(sock)
+
+    return HttpResponse(content="MiniWrite " + msg)
+
 
 
 

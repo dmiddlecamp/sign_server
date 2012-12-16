@@ -14,7 +14,8 @@ class Twitter(object):
     '''
 
     twitterBaseUrl = "http://search.twitter.com/search.json?q=%40CoCoMSP&rpp=10&result_type=recent"
-    #twitterBaseUrl = "http://search.twitter.com/search.json?q=%23aam40years&rpp=10&result_type=recent"
+    #twitterBaseUrl = "http://search.twitter.com/search.json?q=%23thefuture&rpp=10&result_type=recent"
+    #twitterBaseUrl = "http://search.twitter.com/search.json?q=%23hellospark&rpp=10&result_type=recent"
 #    twitterBaseUrl = "http://api.twitter.com/1/lists/statuses.json?slug=coco-members&owner_screen_name=CoCoMSP&page=1&per_page=10"
     lastTweetId = -1
 #    maxCharsPerRow = 80
