@@ -31,7 +31,9 @@
 
 <div class="contents">
     <div class="searchBox">
-        <input type="text" data-id="searchBox" />
+        <form>
+            <input type="text" data-id="searchBox" />
+        </form>
     </div>
     <br/>
     <div class="searchBoxLower">
@@ -40,6 +42,9 @@
     </div>
 </div>
 
+<div class="contents results">
+
+</div>
 
 
 
@@ -49,8 +54,37 @@
 <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 <script>
     $(function() {
+        var doSearch = function() {
+            var searchTerm = $("input").val();
+
+            console.debug('clicked ', searchTerm);
+
+            var url = "search/" + searchTerm;
+            $.ajax({
+                url: url,
+                dataType:"json"
+            })
+            .then(onSearchResults);
+
+            return false;
+        };
+
+        var onSearchResults = function(data) {
+//            var lines = [];
+//
+//            for(var item in data.items) {
+//                lines.push(
+//
+//                )
+//
+//            }
+
+        };
 
 
+        $("form").on('submit', doSearch);
+        $(".searchBtn").on('click', doSearch);
+        $(".luckyBtn").on('click', doSearch);
 
     });
 

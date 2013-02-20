@@ -397,7 +397,7 @@ def google_search_box(request):
     return HttpResponse(content="Drew search box")
 
 
-def perform_search(searchTerm):
+def perform_search_raw(searchTerm):
     url ="https://www.googleapis.com/customsearch/v1?&key=AIzaSyC7OnOEwUnuaO88OyRuNXPK3rb5vWADZmY&cx=013731165046981223649:dvtwekncyue&alt=json&q=%s" % (searchTerm, )
 
 
@@ -407,6 +407,11 @@ def perform_search(searchTerm):
         data = req.read()
     except:
         return
+
+    return data
+
+
+def process_search_data(data):
 
     obj = json.loads(data)
     lines = []
@@ -435,6 +440,8 @@ def google_do_search(request, searchTerm="Test"):
         #"                                                  "
         ]
 
+    searchData = perform_search_raw(searchTerm)
+    results = process_search_data(searchData)
 
 
     sock = None
@@ -444,9 +451,9 @@ def google_do_search(request, searchTerm="Test"):
             row += 1
 
 
-        lines = perform_search(searchTerm)
+        #lines = perform_search(searchTerm)
         col = 0
-        for line in lines:
+        for line in results:
             board.write_split(sock, display, row, col, [ line ])
             row += 1
 
@@ -454,7 +461,7 @@ def google_do_search(request, searchTerm="Test"):
         pass
 
     board.close_connection(sock)
-    return HttpResponse(content="Drew search box")
+    return HttpResponse(content=searchData, content_type="application/json")
 
 def google_search_page(request):
     return render_to_response('sign_server/search_page.html')
