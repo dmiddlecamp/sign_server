@@ -41,7 +41,7 @@
 </div>
 
 <div class="contents results">
-
+<ul></ul>
 </div>
 
 
@@ -57,12 +57,12 @@
             var url = "search/" + searchTerm;
             $.ajax({
                 url: url,
-                dataType: json
-            }).then(onSearchResult);
+                dataType: 'json'
+            }).then(onSearchResults);
             return false;
         };
 
-        var onSearchResult = function(data) {
+        var onSearchResults = function(data) {
             var template = "" +
                     "<li>{{idx}}.) <span class='title'>{{title}}</span>" +
                     " <div class='snippet'>{{snippet}}</div> " +

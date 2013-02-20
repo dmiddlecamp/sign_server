@@ -69,7 +69,8 @@ STATIC_URL = '/static/'
 # in prod
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 STATICFILES_DIRS = (
-  os.path.join(SITE_ROOT, 'static/'),
+  #os.path.join(SITE_ROOT, 'static/'),
+  '/projects/sign_server/html/static/',
 )
 
 # URL prefix for admin static files -- CSS, JavaScript and images.
@@ -79,6 +80,7 @@ ADMIN_MEDIA_PREFIX = '/litebrite/static/admin/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
+                   '/projects/sign_server/html/static/',
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.

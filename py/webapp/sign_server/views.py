@@ -1,6 +1,7 @@
 # Create your views here.
 from dircache import annotate
 import json
+import urllib
 import urllib2
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -398,6 +399,7 @@ def google_search_box(request):
 
 
 def perform_search_raw(searchTerm):
+    searchTerm = urllib.quote_plus(searchTerm)
     url ="https://www.googleapis.com/customsearch/v1?&key=AIzaSyC7OnOEwUnuaO88OyRuNXPK3rb5vWADZmY&cx=013731165046981223649:dvtwekncyue&alt=json&q=%s" % (searchTerm, )
 
 
@@ -418,7 +420,7 @@ def process_search_data(data):
     idx = 1
     for item in obj['items']:
         lines.append(
-            "%d.) %s - %s" % (idx, item['title'], item['formattedUrl'], )
+            "%d.) %s - %s" % (idx, item['title'], item['snippet'], )
         )
         idx += 1
 
@@ -442,7 +444,8 @@ def google_do_search(request, searchTerm="Test"):
 
     searchData = perform_search_raw(searchTerm)
     results = process_search_data(searchData)
-
+    while len(results) < 10:
+        results.append(" ".ljust(80, ' '))
 
     sock = None
     try:
