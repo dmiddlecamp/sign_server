@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+<style>
+    .contents {
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+        text-align:center;
+    }
+
+    .searchBar input {
+        width: 100%;
+        border: 1px solid blue;
+    }
+
+
+</style>
+
+</head>
+<body>
+
+
+
+<div class="contents logo">
+    <img src="http://cocomsp.com/wp-content/themes/arras-theme-new/images/coco-logo.png" />
+</div>
+
+<div class="contents">
+    <div class="searchBar">
+        <form>
+            <input type="text" />
+        </form>
+    </div>
+    <div class="lowerSearchBar">
+        <button class="searchBtn">Google Search</button>
+        <button class="luckyBtn">I'm Feeling Lucky</button>
+    </div>
+</div>
+
+
+
+
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="/static/mustache.js"></script>
+<script>
+
+    $(function() {
+
+        var doSearch = function() {
+            var searchTerm = $('input').val();
+            var url = "search/" + searchTerm;
+            $.ajax({
+                url: url,
+                dataType: json
+            }).then(onSearchResult);
+            return false;
+        };
+
+        var onSearchResult = function(data) {
+            var template = "" +
+                    "<li>{{idx}}.) <span class='title'>{{title}}</span>" +
+                    " <div class='snippet'>{{snippet}}</div> " +
+                    " <div class='link'><a href='{{formattedLink}}'>{{formattedLink}}</a></div>" +
+                    "</li> ";
+
+            var lines = [];
+            for(var i=0;i<data.items.length;i++) {
+                var item = data.items[i];
+                item.idx = i + 1;
+                lines.push(Mustache.render(template, item));
+            }
+
+            $('.results ul').html(lines.join('\n'));
+        };
+
+        $('form').on('submit', doSearch);
+        $('.searchBtn').on('submit', doSearch);
+        $('.luckyBtn').on('submit', doSearch);
+
+    });
+
+
+</script>
+
+
+</body>
+</html>
