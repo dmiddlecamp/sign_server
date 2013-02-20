@@ -1,29 +1,27 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Coco Search</title>
+    <title></title>
+<style>
+    .contents {
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+        text-align:center;
+    }
+
+    .searchBar input {
+        width: 100%;
+        border: 1px solid blue;
+    }
 
 
-    <style>
+</style>
 
-        .contents {
-            margin-left: auto;
-            margin-right: auto;
-            width: 50%;
-            text-align:center;
-        }
-
-        .searchBox input {
-            border: 1px solid blue;
-            width: 100%;
-        }
-
-
-
-    </style>
 </head>
 <body>
+
+
 
 <div class="contents logo">
     <img src="http://cocomsp.com/wp-content/themes/arras-theme-new/images/coco-logo.png" />
@@ -48,48 +46,46 @@
 
 
 
-
-
-
 <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="/static/mustache.js"></script>
 <script>
+
     $(function() {
+
         var doSearch = function() {
-            var searchTerm = $("input").val();
-
-            console.debug('clicked ', searchTerm);
-
+            var searchTerm = $('input').val();
             var url = "search/" + searchTerm;
             $.ajax({
                 url: url,
-                dataType:"json"
-            })
-            .then(onSearchResults);
-
+                dataType: json
+            }).then(onSearchResult);
             return false;
         };
 
-        var onSearchResults = function(data) {
-//            var lines = [];
-//
-//            for(var item in data.items) {
-//                lines.push(
-//
-//                )
-//
-//            }
+        var onSearchResult = function(data) {
+            var template = "" +
+                    "<li>{{idx}}.) <span class='title'>{{title}}</span>" +
+                    " <div class='snippet'>{{snippet}}</div> " +
+                    " <div class='link'><a href='{{formattedLink}}'>{{formattedLink}}</a></div>" +
+                    "</li> ";
 
+            var lines = [];
+            for(var i=0;i<data.items.length;i++) {
+                var item = data.items[i];
+                item.idx = i + 1;
+                lines.push(Mustache.render(template, item));
+            }
+
+            $('.results ul').html(lines.join('\n'));
         };
 
-
-        $("form").on('submit', doSearch);
-        $(".searchBtn").on('click', doSearch);
-        $(".luckyBtn").on('click', doSearch);
+        $('form').on('submit', doSearch);
+        $('.searchBtn').on('submit', doSearch);
+        $('.luckyBtn').on('submit', doSearch);
 
     });
 
 
 </script>
-
 </body>
 </html>
