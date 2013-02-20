@@ -41,6 +41,7 @@ urlpatterns = patterns('',
     url(r'^google/logo/$', 'sign_server.views.google_logo'),
     url(r'^google/drawbox/$', 'sign_server.views.google_search_box'),
     url(r'^google/search/(?P<searchTerm>.*)$', 'sign_server.views.google_do_search'),
+    url(r'^google/search$', 'sign_server.views.google_search_page'),
 
 
 

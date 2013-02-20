@@ -431,8 +431,8 @@ def google_do_search(request, searchTerm="Test"):
         "##################################################",
         "#%s#" % (searchTerm.ljust(48, ' '),),
         "##################################################",
-        "Google Search                    I'm feeling Lucky",
-        "                                                  "
+        "Google Search                    I'm feeling Lucky"
+        #"                                                  "
         ]
 
 
@@ -456,6 +456,7 @@ def google_do_search(request, searchTerm="Test"):
     board.close_connection(sock)
     return HttpResponse(content="Drew search box")
 
-
+def google_search_page(request):
+    return render_to_response('sign_server/search_page.html')
 
 
