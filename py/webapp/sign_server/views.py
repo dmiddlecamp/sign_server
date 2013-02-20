@@ -1,5 +1,7 @@
 # Create your views here.
 from dircache import annotate
+import json
+import urllib2
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from sign_server import board, twitter, weather, announcements, board_updater
@@ -356,3 +358,104 @@ def test_chars(request):
         board.close_connection(sock)
 
     return HttpResponse(content="Test Chars Completed")
+
+
+def google_logo(request):
+    file = "logo"
+    board.write_file('/projects/sign_server/google/' + file + '.txt')
+    return HttpResponse(content="Displayed Test " + file)
+
+
+SEARCH_BOX_DISPLAY=1
+SEARCH_BOX_COL=10
+SEARCH_BOX_ROW=1
+
+
+def google_search_box(request):
+    row = SEARCH_BOX_ROW
+    col = SEARCH_BOX_COL
+    display = SEARCH_BOX_DISPLAY
+
+    lines = [
+        "##################################################",
+        "#                                                #",
+        "##################################################",
+        "Google Search                    I'm feeling Lucky",
+    ]
+
+
+    sock = None
+    try:
+        for line in lines:
+            board.write_split(sock, display, row, col, [ line ])
+            row += 1
+
+    except:
+        pass
+
+    board.close_connection(sock)
+    return HttpResponse(content="Drew search box")
+
+
+def perform_search(searchTerm):
+    url ="https://www.googleapis.com/customsearch/v1?&key=AIzaSyC7OnOEwUnuaO88OyRuNXPK3rb5vWADZmY&cx=013731165046981223649:dvtwekncyue&alt=json&q=%s" % (searchTerm, )
+
+
+    data = None
+    try:
+        req = urllib2.urlopen(url)
+        data = req.read()
+    except:
+        return
+
+    obj = json.loads(data)
+    lines = []
+    idx = 1
+    for item in obj['items']:
+        lines.append(
+            "%d.) %s - %s" % (idx, item['title'], item['formattedUrl'], )
+        )
+        idx += 1
+
+    return lines
+
+
+
+
+def google_do_search(request, searchTerm="Test"):
+    row = SEARCH_BOX_ROW
+    col = SEARCH_BOX_COL
+    display = SEARCH_BOX_DISPLAY
+
+    lines = [
+        "##################################################",
+        "#%s#" % (searchTerm.ljust(48, ' '),),
+        "##################################################",
+        "Google Search                    I'm feeling Lucky",
+        "                                                  "
+        ]
+
+
+
+    sock = None
+    try:
+        for line in lines:
+            board.write_split(sock, display, row, col, [ line ])
+            row += 1
+
+
+        lines = perform_search(searchTerm)
+        col = 0
+        for line in lines:
+            board.write_split(sock, display, row, col, [ line ])
+            row += 1
+
+    except:
+        pass
+
+    board.close_connection(sock)
+    return HttpResponse(content="Drew search box")
+
+
+
+

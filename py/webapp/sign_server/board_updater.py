@@ -48,13 +48,13 @@ def updateInfoBoard(foo, bar):
 
         clearStr = ' '.rjust(32)
         board.write_to_board(sock, 4, 0, 0, clearStr)
-        if settings.MINI_TIME_TEMP:
-            board.write_to_board(sock, 6, 6, 0, clearStr)
+        #if settings.MINI_TIME_TEMP:
+        board.write_to_board(sock, 6, 6, 0, clearStr)
 
         timeStamp = localtime(time())
         board.write_to_board(sock, 4, 0, 1, strftime("%a, %d %B %I:%M%p", timeStamp))
-        if settings.MINI_TIME_TEMP:
-            board.write_to_board(sock, 6, 6, 0, strftime("%A, %d %B %I:%M%p", timeStamp))
+        #if settings.MINI_TIME_TEMP:
+        board.write_to_board(sock, 6, 6, 0, strftime("%A, %d %B %I:%M%p", timeStamp))
         curRowNum = 1
 
         for row in weatherRows:

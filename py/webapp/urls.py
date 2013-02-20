@@ -38,6 +38,10 @@ urlpatterns = patterns('',
     url(r'^mini/(?P<row>.*)/(?P<col>.*)/(?P<msg>.*)', 'sign_server.views.miniWrite'),
     url(r'^miniTimeTemp/$', 'sign_server.views.miniTimeTemp'),
 
+    url(r'^google/logo/$', 'sign_server.views.google_logo'),
+    url(r'^google/drawbox/$', 'sign_server.views.google_search_box'),
+    url(r'^google/search/(?P<searchTerm>.*)$', 'sign_server.views.google_do_search'),
+
 
 
     url(r'^peggy/get_lease$', 'sign_server.peggy.get_lease'),
