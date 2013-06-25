@@ -1,26 +1,20 @@
 '''
 Created on Mar 7, 2012
+Migrated to Twitter API 1.1 on June 25, 2013 by towynlin (Zachary Crockett)
 
 @author: robert
 '''
-import json
+import os
 import random
 import re
-import urllib
+from rauth import OAuth1Session
 
 class Twitter(object):
     '''
     classdocs
     '''
 
-    twitterBaseUrl = "http://search.twitter.com/search.json?q=%40CoCoMSP&rpp=10&result_type=recent"
-    #twitterBaseUrl = "http://search.twitter.com/search.json?q=%23thefuture&rpp=10&result_type=recent"
-    #twitterBaseUrl = "http://search.twitter.com/search.json?q=%23hellospark&rpp=10&result_type=recent"
-#    twitterBaseUrl = "http://api.twitter.com/1/lists/statuses.json?slug=coco-members&owner_screen_name=CoCoMSP&page=1&per_page=10"
     lastTweetId = -1
-#    maxCharsPerRow = 80
-#    maxRows = 6
-
 
     def __init__(self):
         '''
@@ -31,13 +25,19 @@ class Twitter(object):
         self.lastTweetId = -1
 
     def getNewTweets(self, maxRows, maxCharsPerRow):
-        self.rawResponse = urllib.urlopen(self.twitterBaseUrl).read()
-        jsonResponse = json.loads(self.rawResponse)
+        session = OAuth1Session(
+            os.environ['COCO_TWITTER_CONSUMER_KEY'],
+            os.environ['COCO_TWITTER_CONSUMER_SECRET'],
+            access_token=os.environ['COCO_TWITTER_ACCESS_TOKEN'],
+            access_token_secret=os.environ['COCO_TWITTER_ACCESS_TOKEN_SECRET'])
+        params = { 'q': '@CoCoMSP', 'count': 10, 'result_type': 'recent' }
+        self.rawResponse = session.get('https://api.twitter.com/1.1/search/tweets.json', params=params)
+        jsonResponse = self.rawResponse.json()
 
-        if (self.lastTweetId == jsonResponse['max_id_str']):
+        if (self.lastTweetId == jsonResponse['search_metadata']['max_id_str']):
             return [ ]
 
-        self.lastTweetId = jsonResponse['max_id_str']
+        self.lastTweetId = jsonResponse['search_metadata']['max_id_str']
 
         curRowNum = 0
         charsLeft = maxCharsPerRow
@@ -46,7 +46,7 @@ class Twitter(object):
 
         curColor = 2
 
-        for tweet in jsonResponse['results'].__iter__():
+        for tweet in jsonResponse['statuses']:
             # Build the printable tweet text
 
             #random colors
@@ -54,7 +54,7 @@ class Twitter(object):
             curColor = (curColor + 1)
             tweetBody = tweet['text'].encode('ascii', 'ignore')
 
-            thisTweet = str(colorStr + '@' + tweet['from_user'] + ': ' + re.sub(' http://[a-zA-Z0-9\./\=\-_?]*', '', tweetBody ) + ' ')
+            thisTweet = str(colorStr + '@' + tweet['user']['screen_name'] + ': ' + re.sub(' http://[a-zA-Z0-9\./\=\-_?]*', '', tweetBody ) + ' ')
             charsLeft = charsLeft + 1
 
             while curRowNum < maxRows:
